@@ -123,6 +123,50 @@ const mapDBToBook = (dbBook: any): Book => {
   };
 };
 
+const mapSubmissionToDB = (submission: Partial<Submission>) => {
+  const db: any = {};
+  if (submission.name !== undefined) db.name = submission.name;
+  if (submission.email !== undefined) db.email = submission.email;
+  if (submission.title !== undefined) db.title = submission.title;
+  if (submission.abstract !== undefined) db.abstract = submission.abstract;
+  if (submission.fileUrl !== undefined) db.file_url = submission.fileUrl;
+  if (submission.fileName !== undefined) db.file_name = submission.fileName;
+  if (submission.date !== undefined) db.date = submission.date;
+  if (submission.status !== undefined) db.status = submission.status;
+  return db;
+};
+
+const mapDBToSubmission = (db: any): Submission => {
+  return {
+    id: db.id,
+    name: db.name,
+    email: db.email,
+    title: db.title,
+    abstract: db.abstract,
+    fileUrl: db.file_url,
+    fileName: db.file_name,
+    date: db.date,
+    status: db.status
+  };
+};
+
+const mapTemplateToDB = (template: Partial<SubmissionTemplate>) => {
+  const db: any = {};
+  if (template.fileUrl !== undefined) db.file_url = template.fileUrl;
+  if (template.fileName !== undefined) db.file_name = template.fileName;
+  if (template.updatedAt !== undefined) db.updated_at = template.updatedAt;
+  return db;
+};
+
+const mapDBToTemplate = (db: any): SubmissionTemplate => {
+  return {
+    id: db.id,
+    fileUrl: db.file_url,
+    fileName: db.file_name,
+    updatedAt: db.updated_at
+  };
+};
+
 export const getBooks = async (): Promise<Book[]> => {
   if (supabase) {
     const { data, error } = await supabase
@@ -404,7 +448,7 @@ export const getSubmissions = async (): Promise<Submission[]> => {
     if (error) {
       console.error('Error fetching submissions from Supabase:', error);
     } else if (data) {
-      return data as Submission[];
+      return data.map(mapDBToSubmission);
     }
   }
 
@@ -420,16 +464,17 @@ export const getSubmissions = async (): Promise<Submission[]> => {
 };
 
 export const addSubmission = async (submission: Omit<Submission, 'id' | 'date' | 'status'>) => {
-  const newSubmissionData = {
+  const newSubmissionData: Omit<Submission, 'id'> = {
     ...submission,
     date: new Date().toISOString(),
     status: 'Pendente'
   };
 
   if (supabase) {
+    const dbSubmission = mapSubmissionToDB(newSubmissionData);
     const { data, error } = await supabase
       .from('submissions')
-      .insert([newSubmissionData])
+      .insert([dbSubmission])
       .select()
       .single();
     
@@ -438,7 +483,7 @@ export const addSubmission = async (submission: Omit<Submission, 'id' | 'date' |
       throw error;
     } else if (data) {
       window.dispatchEvent(new Event('submissionsUpdated'));
-      return data as Submission;
+      return mapDBToSubmission(data);
     }
   }
 
@@ -507,7 +552,7 @@ export const getSubmissionTemplate = async (): Promise<SubmissionTemplate | null
     if (error && error.code !== 'PGRST116') {
       console.error('Error fetching template from Supabase:', error);
     } else if (data) {
-      return data as SubmissionTemplate;
+      return mapDBToTemplate(data);
     }
   }
 
@@ -530,10 +575,12 @@ export const updateSubmissionTemplate = async (template: Omit<SubmissionTemplate
 
   if (supabase) {
     const existing = await getSubmissionTemplate();
+    const dbTemplate = mapTemplateToDB(newTemplateData);
+    
     if (existing) {
       const { error } = await supabase
         .from('submission_templates')
-        .update(newTemplateData)
+        .update(dbTemplate)
         .eq('id', existing.id);
       
       if (error) {
@@ -543,7 +590,7 @@ export const updateSubmissionTemplate = async (template: Omit<SubmissionTemplate
     } else {
       const { error } = await supabase
         .from('submission_templates')
-        .insert([newTemplateData]);
+        .insert([dbTemplate]);
       
       if (error) {
         console.error('Error inserting template in Supabase:', error);
