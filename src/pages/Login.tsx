@@ -48,9 +48,14 @@ export function Login() {
         
         <div className="relative z-10 p-12 flex flex-col items-center text-center max-w-lg">
           <div className="bg-white/10 p-5 rounded-2xl backdrop-blur-md mb-8 border border-white/10">
-            <BookOpen size={56} className="text-obs-gold" strokeWidth={1.5} />
+            {/* Logo Image - Replace src with your actual logo file path */}
+            <img 
+              src="https://picsum.photos/seed/observatorio-logo/300/100" 
+              alt="Observatório Edições" 
+              className="h-20 w-auto object-contain brightness-0 invert"
+              referrerPolicy="no-referrer"
+            />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-6 tracking-tight">Observatório Edições</h1>
           <p className="text-xl text-white/80 font-serif italic leading-relaxed">
             "Acesso aberto ao conhecimento científico e fortalecimento da produção acadêmica."
           </p>
@@ -65,18 +70,13 @@ export function Login() {
         </Link>
 
         <div className="max-w-md w-full mx-auto">
-          <div className="mb-10 lg:hidden flex items-center gap-3">
-            <div className="bg-obs-dark text-obs-gold p-2.5 rounded-xl">
-              <BookOpen size={28} strokeWidth={1.5} />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold text-obs-dark tracking-tight leading-none">
-                Observatório
-              </span>
-              <span className="text-sm font-cursive text-obs-light italic leading-tight">
-                Edições
-              </span>
-            </div>
+          <div className="mb-10 lg:hidden flex items-center justify-center">
+            <img 
+              src="https://picsum.photos/seed/observatorio-logo/300/100" 
+              alt="Observatório Edições" 
+              className="h-12 w-auto object-contain"
+              referrerPolicy="no-referrer"
+            />
           </div>
 
           <h2 className="text-3xl font-bold text-obs-dark tracking-tight mb-2">

@@ -541,17 +541,16 @@ export function Admin() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-3">
-              <div className="bg-obs-dark text-obs-gold p-2 rounded-lg">
-                <BookOpen size={20} strokeWidth={2} />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-obs-dark tracking-tight leading-none">
-                  Painel Administrativo
-                </span>
-                <span className="text-xs font-cursive text-obs-light italic leading-tight">
-                  Observatório Edições
-                </span>
-              </div>
+              <img 
+                src="https://picsum.photos/seed/observatorio-logo/300/100" 
+                alt="Observatório Edições" 
+                className="h-10 w-auto object-contain"
+                referrerPolicy="no-referrer"
+              />
+              <div className="w-px h-8 bg-obs-dark/10 mx-1"></div>
+              <span className="text-sm font-bold text-obs-dark tracking-tight leading-none">
+                Painel Administrativo
+              </span>
             </div>
 
             <div className="flex items-center gap-6">

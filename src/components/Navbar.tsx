@@ -45,17 +45,13 @@ export function Navbar() {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="bg-obs-dark text-obs-gold p-2 rounded-lg group-hover:bg-obs-light transition-colors">
-                <BookOpen size={28} strokeWidth={1.5} />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold text-obs-dark tracking-tight leading-none">
-                  Observatório
-                </span>
-                <span className="text-sm font-cursive text-obs-light italic leading-tight">
-                  Edições
-                </span>
-              </div>
+              {/* Logo Image - Replace src with your actual logo file path */}
+              <img 
+                src="https://picsum.photos/seed/observatorio-logo/300/100" 
+                alt="Observatório Edições" 
+                className="h-12 w-auto object-contain"
+                referrerPolicy="no-referrer"
+              />
             </Link>
           </div>
 

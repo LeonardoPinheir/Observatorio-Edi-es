@@ -6,7 +6,7 @@ import { Download, ExternalLink, BookOpen, ArrowRight } from 'lucide-react';
 export const BookCard: React.FC<{ book: Book }> = ({ book }) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-obs-bg overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col h-full group">
-      <Link to={`/book/${book.id}`} className="relative aspect-[3/4] overflow-hidden bg-obs-bg block">
+      <Link to={`/book/${book.id}`} className="relative aspect-[210/297] overflow-hidden bg-obs-bg block">
         {book.coverUrl ? (
           <img
             src={book.coverUrl}
@@ -20,9 +20,6 @@ export const BookCard: React.FC<{ book: Book }> = ({ book }) => {
           </div>
         )}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
-          <div className="bg-white/90 backdrop-blur text-obs-dark text-xs font-semibold px-3 py-1 rounded-full shadow-sm w-fit">
-            {book.category}
-          </div>
           {book.type && (
             <div className="bg-obs-dark/90 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm w-fit">
               {book.type}

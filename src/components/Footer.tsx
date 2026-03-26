@@ -38,8 +38,13 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="pt-10 border-t border-white/10 space-y-3">
-          <h3 className="text-xl font-bold tracking-tight">Observatório Edições</h3>
+        <div className="pt-10 border-t border-white/10 space-y-3 flex flex-col items-center">
+          <img 
+            src="https://picsum.photos/seed/observatorio-logo/300/100" 
+            alt="Observatório Edições" 
+            className="h-16 w-auto object-contain brightness-0 invert opacity-90"
+            referrerPolicy="no-referrer"
+          />
           <p className="text-sm text-obs-light italic font-serif opacity-80">Inovação, Cultura e Conhecimento</p>
           <div className="text-[10px] sm:text-xs text-white/40 pt-6 flex flex-wrap justify-center items-center gap-x-4 gap-y-2 uppercase tracking-widest">
             <span>© 2024 Todos os direitos reservados</span>
