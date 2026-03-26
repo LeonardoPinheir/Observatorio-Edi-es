@@ -585,7 +585,7 @@ export const login = async (email: string, pass: string): Promise<{ success: boo
   }
 
   // Fallback simulated auth
-  if (email === 'leonardo.pinheiro@gmail.com' && pass === '123456') {
+  if ((email === 'leonardo.pinheiro@gmail.com' || email === 'leonardo.pinheirolk@gmail.com') && pass === '123456') {
     localStorage.setItem('obs_auth', 'true');
     return { success: true };
   }
