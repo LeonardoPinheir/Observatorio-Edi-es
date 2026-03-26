@@ -542,7 +542,7 @@ export function Admin() {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-3">
               <img 
-                src="https://picsum.photos/seed/observatorio-logo/300/100" 
+                src="https://storage.googleapis.com/static.antigravity.ai/projects/7cqk2mqdsc4i5xnqct275m/assets/logo_observatorio.png" 
                 alt="Observatório Edições" 
                 className="h-10 w-auto object-contain"
                 referrerPolicy="no-referrer"

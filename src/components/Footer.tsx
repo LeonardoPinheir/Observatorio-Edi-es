@@ -40,7 +40,7 @@ export function Footer() {
 
         <div className="pt-10 border-t border-white/10 space-y-3 flex flex-col items-center">
           <img 
-            src="https://picsum.photos/seed/observatorio-logo/300/100" 
+            src="https://storage.googleapis.com/static.antigravity.ai/projects/7cqk2mqdsc4i5xnqct275m/assets/logo_observatorio.png" 
             alt="Observatório Edições" 
             className="h-16 w-auto object-contain brightness-0 invert opacity-90"
             referrerPolicy="no-referrer"

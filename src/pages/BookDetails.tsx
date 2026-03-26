@@ -50,12 +50,12 @@ export function BookDetails() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
             {/* Left Column - Cover & Actions */}
             <div className="lg:col-span-4 bg-obs-dark/5 p-8 flex flex-col items-center border-b lg:border-b-0 lg:border-r border-obs-dark/5">
-              <div className="w-full max-w-xs aspect-[3/4] bg-white rounded-xl shadow-md overflow-hidden mb-8 relative">
+              <div className="w-full max-w-xs aspect-[210/297] bg-white rounded-xl shadow-md overflow-hidden mb-8 relative">
                 {book.coverUrl ? (
                   <img
                     src={book.coverUrl}
                     alt={`Capa do livro ${book.title}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     referrerPolicy="no-referrer"
                   />
                 ) : (
@@ -63,17 +63,6 @@ export function BookDetails() {
                     <BookOpen size={80} strokeWidth={1} />
                   </div>
                 )}
-                
-                <div className="absolute top-4 left-4 flex flex-col gap-2">
-                  <div className="bg-white/90 backdrop-blur text-obs-dark text-xs font-semibold px-3 py-1 rounded-full shadow-sm w-fit">
-                    {book.category || 'Sem categoria'}
-                  </div>
-                  {book.type && (
-                    <div className="bg-obs-dark/90 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm w-fit">
-                      {book.type}
-                    </div>
-                  )}
-                </div>
               </div>
 
               <div className="w-full space-y-3">

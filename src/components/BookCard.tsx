@@ -11,7 +11,7 @@ export const BookCard: React.FC<{ book: Book }> = ({ book }) => {
           <img
             src={book.coverUrl}
             alt={`Capa do livro ${book.title}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
             referrerPolicy="no-referrer"
           />
         ) : (
@@ -19,13 +19,6 @@ export const BookCard: React.FC<{ book: Book }> = ({ book }) => {
             <BookOpen size={64} />
           </div>
         )}
-        <div className="absolute top-4 left-4 flex flex-col gap-2">
-          {book.type && (
-            <div className="bg-obs-dark/90 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm w-fit">
-              {book.type}
-            </div>
-          )}
-        </div>
       </Link>
 
       <div className="p-6 flex flex-col flex-grow">

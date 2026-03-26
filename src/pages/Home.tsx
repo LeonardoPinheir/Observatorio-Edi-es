@@ -190,7 +190,7 @@ export function Home() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {books
                 .filter(book => book.status === 'Publicado')
                 .sort((a, b) => (b.year || 0) - (a.year || 0))

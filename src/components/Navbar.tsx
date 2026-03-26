@@ -45,9 +45,8 @@ export function Navbar() {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-3 group">
-              {/* Logo Image - Replace src with your actual logo file path */}
               <img 
-                src="https://picsum.photos/seed/observatorio-logo/300/100" 
+                src="https://storage.googleapis.com/static.antigravity.ai/projects/7cqk2mqdsc4i5xnqct275m/assets/logo_observatorio.png" 
                 alt="Observatório Edições" 
                 className="h-12 w-auto object-contain"
                 referrerPolicy="no-referrer"
