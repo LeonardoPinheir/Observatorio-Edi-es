@@ -67,11 +67,34 @@ CREATE TABLE IF NOT EXISTS team_members (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Submissions table
+CREATE TABLE IF NOT EXISTS submissions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  title TEXT NOT NULL,
+  abstract TEXT NOT NULL,
+  fileUrl TEXT NOT NULL,
+  fileName TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'Pendente',
+  date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Submission Templates table
+CREATE TABLE IF NOT EXISTS submission_templates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  fileUrl TEXT NOT NULL,
+  fileName TEXT NOT NULL,
+  updatedAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Enable Row Level Security (RLS)
 ALTER TABLE books ENABLE ROW LEVEL SECURITY;
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE open_calls ENABLE ROW LEVEL SECURITY;
 ALTER TABLE team_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE submission_templates ENABLE ROW LEVEL SECURITY;
 
 -- Create policies (simplified for now, assuming admin access is handled via API key or similar in this context)
 -- In a real app, you'd use auth.uid() checks.
@@ -81,19 +104,27 @@ DROP POLICY IF EXISTS "Public read access for books" ON books;
 DROP POLICY IF EXISTS "Public read access for open_calls" ON open_calls;
 DROP POLICY IF EXISTS "Public read access for team_members" ON team_members;
 DROP POLICY IF EXISTS "Public insert access for messages" ON messages;
+DROP POLICY IF EXISTS "Public insert access for submissions" ON submissions;
+DROP POLICY IF EXISTS "Public read access for submission_templates" ON submission_templates;
 DROP POLICY IF EXISTS "Admin full access for books" ON books;
 DROP POLICY IF EXISTS "Admin full access for messages" ON messages;
 DROP POLICY IF EXISTS "Admin full access for open_calls" ON open_calls;
 DROP POLICY IF EXISTS "Admin full access for team_members" ON team_members;
+DROP POLICY IF EXISTS "Admin full access for submissions" ON submissions;
+DROP POLICY IF EXISTS "Admin full access for submission_templates" ON submission_templates;
 
 -- Create policies
 CREATE POLICY "Public read access for books" ON books FOR SELECT USING (status = 'Publicado' OR status = 'Arquivado');
 CREATE POLICY "Public read access for open_calls" ON open_calls FOR SELECT USING (TRUE);
 CREATE POLICY "Public read access for team_members" ON team_members FOR SELECT USING (TRUE);
 CREATE POLICY "Public insert access for messages" ON messages FOR INSERT WITH CHECK (TRUE);
+CREATE POLICY "Public insert access for submissions" ON submissions FOR INSERT WITH CHECK (TRUE);
+CREATE POLICY "Public read access for submission_templates" ON submission_templates FOR SELECT USING (TRUE);
 
 -- Admin policies (assuming authenticated users are admins for this simple setup)
 CREATE POLICY "Admin full access for books" ON books FOR ALL USING (TRUE);
 CREATE POLICY "Admin full access for messages" ON messages FOR ALL USING (TRUE);
 CREATE POLICY "Admin full access for open_calls" ON open_calls FOR ALL USING (TRUE);
 CREATE POLICY "Admin full access for team_members" ON team_members FOR ALL USING (TRUE);
+CREATE POLICY "Admin full access for submissions" ON submissions FOR ALL USING (TRUE);
+CREATE POLICY "Admin full access for submission_templates" ON submission_templates FOR ALL USING (TRUE);

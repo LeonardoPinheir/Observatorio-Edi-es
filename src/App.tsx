@@ -9,6 +9,7 @@ import { Login } from './pages/Login';
 import { Admin } from './pages/Admin';
 import { BookDetails } from './pages/BookDetails';
 import { Publications } from './pages/Publications';
+import { Submissions } from './pages/Submissions';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/publicacoes" element={<Publications />} />
+        <Route path="/submissoes" element={<Submissions />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/book/:id" element={<BookDetails />} />

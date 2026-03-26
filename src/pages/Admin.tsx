@@ -4,22 +4,26 @@ import {
   getBooks, addBook, updateBook, deleteBook, logout, isAuthenticated, Book, 
   getMessages, updateMessageStatus, deleteMessage, Message, getUnreadMessagesCount,
   getCalls, addCall, updateCall, deleteCall, Call,
-  getTeam, addTeamMember, updateTeamMember, deleteTeamMember, TeamMember
+  getTeam, addTeamMember, updateTeamMember, deleteTeamMember, TeamMember,
+  getSubmissions, updateSubmissionStatus, deleteSubmission, getSubmissionTemplate, updateSubmissionTemplate, Submission, SubmissionTemplate
 } from '../lib/store';
 import { 
   BookOpen, LogOut, Plus, Edit2, Trash2, Search, X, Check, Eye, Filter, 
   AlertTriangle, Upload, Mail, MessageSquare, Calendar, User, ChevronRight, 
-  CheckCircle2, Reply, Users, Clock, Link as LinkIcon
+  CheckCircle2, Reply, Users, Clock, Link as LinkIcon, Download, FileText
 } from 'lucide-react';
 
 export function Admin() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'books' | 'messages' | 'calls' | 'team'>('books');
+  const [activeTab, setActiveTab] = useState<'books' | 'messages' | 'calls' | 'team' | 'submissions'>('books');
   const [books, setBooks] = useState<Book[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [template, setTemplate] = useState<SubmissionTemplate | null>(null);
   const [calls, setCalls] = useState<Call[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [pendingSubmissionsCount, setPendingSubmissionsCount] = useState(0);
   
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingCall, setIsEditingCall] = useState(false);
@@ -30,9 +34,11 @@ export function Admin() {
   const [currentTeamMember, setCurrentTeamMember] = useState<Partial<TeamMember>>({});
   
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [messageSearchTerm, setMessageSearchTerm] = useState('');
+  const [submissionSearchTerm, setSubmissionSearchTerm] = useState('');
   const [callSearchTerm, setCallSearchTerm] = useState('');
   const [teamSearchTerm, setTeamSearchTerm] = useState('');
   
@@ -40,6 +46,7 @@ export function Admin() {
   const [typeFilter, setTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [messageStatusFilter, setMessageStatusFilter] = useState('');
+  const [submissionStatusFilter, setSubmissionStatusFilter] = useState('');
   const [callStatusFilter, setCallStatusFilter] = useState('');
   
   const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'title_asc' | 'title_desc'>('date_desc');
@@ -48,6 +55,7 @@ export function Admin() {
   const [callToDelete, setCallToDelete] = useState<string | null>(null);
   const [teamToDelete, setTeamToDelete] = useState<string | null>(null);
   
+  const [submissionToDelete, setSubmissionToDelete] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -59,15 +67,20 @@ export function Admin() {
       if (!isAuth) {
         navigate('/login');
       } else {
-        const [booksData, messagesData, callsData, teamData, unread] = await Promise.all([
+        const [booksData, messagesData, submissionsData, templateData, callsData, teamData, unread] = await Promise.all([
           getBooks(),
           getMessages(),
+          getSubmissions(),
+          getSubmissionTemplate(),
           getCalls(),
           getTeam(),
           getUnreadMessagesCount()
         ]);
         setBooks(booksData);
         setMessages(messagesData);
+        setSubmissions(submissionsData);
+        setTemplate(templateData);
+        setPendingSubmissionsCount(submissionsData.filter(s => s.status === 'Pendente').length);
         setCalls(callsData);
         setTeam(teamData);
         setUnreadCount(unread);
@@ -92,6 +105,17 @@ export function Admin() {
       setUnreadCount(unread);
     };
 
+    const handleSubmissionsUpdate = async () => {
+      const submissionsData = await getSubmissions();
+      setSubmissions(submissionsData);
+      setPendingSubmissionsCount(submissionsData.filter(s => s.status === 'Pendente').length);
+    };
+
+    const handleTemplateUpdate = async () => {
+      const templateData = await getSubmissionTemplate();
+      setTemplate(templateData);
+    };
+
     const handleCallsUpdate = async () => {
       const callsData = await getCalls();
       setCalls(callsData);
@@ -105,6 +129,8 @@ export function Admin() {
     window.addEventListener('storage', handleUpdate);
     window.addEventListener('booksUpdated', handleUpdate);
     window.addEventListener('messagesUpdated', handleMessagesUpdate);
+    window.addEventListener('submissionsUpdated', handleSubmissionsUpdate);
+    window.addEventListener('templateUpdated', handleTemplateUpdate);
     window.addEventListener('callsUpdated', handleCallsUpdate);
     window.addEventListener('teamUpdated', handleTeamUpdate);
 
@@ -112,6 +138,8 @@ export function Admin() {
       window.removeEventListener('storage', handleUpdate);
       window.removeEventListener('booksUpdated', handleUpdate);
       window.removeEventListener('messagesUpdated', handleMessagesUpdate);
+      window.removeEventListener('submissionsUpdated', handleSubmissionsUpdate);
+      window.removeEventListener('templateUpdated', handleTemplateUpdate);
       window.removeEventListener('callsUpdated', handleCallsUpdate);
       window.removeEventListener('teamUpdated', handleTeamUpdate);
     };
@@ -241,6 +269,72 @@ export function Admin() {
       setTimeout(() => setSuccessMessage(''), 3000);
     }
   };
+
+  const handleTemplateUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' && 
+        file.type !== 'application/msword') {
+      alert('Por favor, envie apenas arquivos em formato Word (.doc ou .docx)');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const base64 = await fileToBase64(file);
+      await updateSubmissionTemplate({
+        fileUrl: base64,
+        fileName: file.name
+      });
+      setSuccessMessage('Novo template definido!');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Error updating template:', error);
+      alert('Erro ao atualizar template.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdateSubmissionStatus = async (id: string, status: Submission['status']) => {
+    await updateSubmissionStatus(id, status);
+    const submissionsData = await getSubmissions();
+    setSubmissions(submissionsData);
+    setPendingSubmissionsCount(submissionsData.filter(s => s.status === 'Pendente').length);
+    if (selectedSubmission && selectedSubmission.id === id) {
+      setSelectedSubmission({ ...selectedSubmission, status });
+    }
+    setSuccessMessage(`Status da submissão atualizado para ${status}!`);
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
+  const executeDeleteSubmission = async () => {
+    if (submissionToDelete) {
+      await deleteSubmission(submissionToDelete);
+      const submissionsData = await getSubmissions();
+      setSubmissions(submissionsData);
+      setPendingSubmissionsCount(submissionsData.filter(s => s.status === 'Pendente').length);
+      setSubmissionToDelete(null);
+      setSelectedSubmission(null);
+      setSuccessMessage('Submissão excluída com sucesso!');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    }
+  };
+
+  const filteredSubmissions = submissions
+    .filter(s => {
+      const searchLower = submissionSearchTerm.toLowerCase();
+      const matchesSearch =
+        (s.name?.toLowerCase() || '').includes(searchLower) ||
+        (s.email?.toLowerCase() || '').includes(searchLower) ||
+        (s.title?.toLowerCase() || '').includes(searchLower);
+
+      const matchesStatus = submissionStatusFilter === '' || s.status === submissionStatusFilter;
+
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const categories = Array.from(new Set(books.map(b => b.category))).filter(Boolean).sort();
   const types = Array.from(new Set(books.map(b => b.type))).filter(Boolean).sort();
@@ -484,7 +578,7 @@ export function Admin() {
       </header>
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8 overflow-x-auto pb-2">
+        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8 overflow-x-auto pt-3 pb-2 px-2">
           <button 
             onClick={() => setActiveTab('books')}
             className={`flex items-center gap-3 px-6 py-3 rounded-2xl transition-all whitespace-nowrap ${
@@ -522,6 +616,23 @@ export function Admin() {
           </button>
 
           <button 
+            onClick={() => setActiveTab('submissions')}
+            className={`flex items-center gap-3 px-6 py-3 rounded-2xl transition-all relative whitespace-nowrap ${
+              activeTab === 'submissions' 
+                ? 'bg-obs-dark text-white shadow-lg shadow-obs-dark/20' 
+                : 'bg-white text-obs-dark/60 hover:bg-gray-50 border border-obs-dark/5'
+            }`}
+          >
+            <FileText size={20} />
+            <span className="font-bold">Submissões</span>
+            {pendingSubmissionsCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-obs-gold text-obs-dark text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
+                {pendingSubmissionsCount}
+              </span>
+            )}
+          </button>
+
+          <button 
             onClick={() => setActiveTab('messages')}
             className={`flex items-center gap-3 px-6 py-3 rounded-2xl transition-all relative whitespace-nowrap ${
               activeTab === 'messages' 
@@ -532,7 +643,7 @@ export function Admin() {
             <Mail size={20} />
             <span className="font-bold">Mensagens</span>
             {unreadCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-obs-gold text-obs-dark text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
+              <span className="absolute -top-1.5 -right-1.5 bg-obs-gold text-obs-dark text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
                 {unreadCount}
               </span>
             )}
@@ -981,6 +1092,175 @@ export function Admin() {
               </div>
             </div>
           </>
+        ) : activeTab === 'submissions' ? (
+          <>
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+              <div>
+                <h1 className="text-2xl font-bold text-obs-dark mb-1">Submissões Recebidas</h1>
+                <p className="text-sm text-obs-dark/60 font-serif">
+                  Gerencie os textos enviados para avaliação e o template oficial.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="bg-white px-5 py-3 rounded-2xl shadow-sm border border-obs-dark/5 flex items-center gap-4">
+                  <div className="bg-obs-gold/10 p-2 rounded-lg text-obs-gold">
+                    <FileText size={20} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-obs-dark/50 uppercase tracking-wider">
+                      Pendentes
+                    </p>
+                    <p className="text-xl font-bold text-obs-dark leading-none">{pendingSubmissionsCount}</p>
+                  </div>
+                </div>
+
+                <div className="bg-white px-5 py-3 rounded-2xl shadow-sm border border-obs-dark/5 flex items-center gap-4">
+                  <div className="bg-obs-teal/10 p-2 rounded-lg text-obs-teal">
+                    <Download size={20} />
+                  </div>
+                  <div className="flex flex-col">
+                    <p className="text-xs font-semibold text-obs-dark/50 uppercase tracking-wider">
+                      Template
+                    </p>
+                    <div className="flex items-center gap-2">
+                      {template ? (
+                        <span className="text-xs font-bold text-obs-dark truncate max-w-[100px]">{template.fileName}</span>
+                      ) : (
+                        <span className="text-xs text-obs-dark/40 italic">Não definido</span>
+                      )}
+                      <label className="cursor-pointer text-obs-light hover:text-obs-dark transition-colors">
+                        <Upload size={14} />
+                        <input type="file" accept=".doc,.docx" className="hidden" onChange={handleTemplateUpload} />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-sm border border-obs-dark/5 overflow-hidden">
+              <div className="p-5 border-b border-obs-bg flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-gray-50/50">
+                <div className="flex flex-col sm:flex-row flex-wrap w-full lg:w-auto gap-4">
+                  <div className="relative w-full sm:w-80">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search className="h-4 w-4 text-obs-dark/40" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Buscar por nome, e-mail ou título..."
+                      value={submissionSearchTerm}
+                      onChange={e => setSubmissionSearchTerm(e.target.value)}
+                      className="block w-full pl-10 pr-3 py-2 border border-obs-dark/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-obs-light/50 bg-white sm:text-sm transition-all"
+                    />
+                  </div>
+
+                  <div className="relative w-full sm:w-48">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Filter className="h-4 w-4 text-obs-dark/40" />
+                    </div>
+                    <select
+                      value={submissionStatusFilter}
+                      onChange={e => setSubmissionStatusFilter(e.target.value)}
+                      className="block w-full pl-10 pr-8 py-2 border border-obs-dark/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-obs-light/50 bg-white sm:text-sm appearance-none transition-all text-obs-dark"
+                    >
+                      <option value="">Todos os status</option>
+                      <option value="Pendente">Pendente</option>
+                      <option value="Em Avaliação">Em Avaliação</option>
+                      <option value="Aceito">Aceito</option>
+                      <option value="Rejeitado">Rejeitado</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-obs-bg">
+                  <thead className="bg-white">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-obs-dark/50 uppercase tracking-wider">
+                        Autor / Título
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-obs-dark/50 uppercase tracking-wider">
+                        Data
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-obs-dark/50 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-4 text-right text-xs font-bold text-obs-dark/50 uppercase tracking-wider">
+                        Ações
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="bg-white divide-y divide-obs-bg">
+                    {filteredSubmissions.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="px-6 py-16 text-center">
+                          <div className="flex flex-col items-center justify-center text-obs-dark/40">
+                            <FileText size={48} className="mb-4 opacity-20" />
+                            <p className="text-lg font-medium text-obs-dark/60">Nenhuma submissão encontrada.</p>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredSubmissions.map(sub => (
+                        <tr 
+                          key={sub.id} 
+                          className={`hover:bg-obs-bg/40 transition-colors group cursor-pointer ${sub.status === 'Pendente' ? 'bg-obs-light/5' : ''}`}
+                          onClick={() => setSelectedSubmission(sub)}
+                        >
+                          <td className="px-6 py-4">
+                            <div className="flex flex-col">
+                              <span className={`text-sm ${sub.status === 'Pendente' ? 'font-bold' : 'font-medium'} text-obs-dark line-clamp-1`}>
+                                {sub.title}
+                              </span>
+                              <span className="text-xs text-obs-dark/60">{sub.name} ({sub.email})</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="text-xs text-obs-dark/60">
+                              {new Date(sub.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span
+                              className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                                sub.status === 'Pendente'
+                                  ? 'bg-obs-gold/10 text-obs-dark border-obs-gold/20'
+                                  : sub.status === 'Aceito'
+                                  ? 'bg-green-50 text-green-700 border-green-200'
+                                  : sub.status === 'Rejeitado'
+                                  ? 'bg-red-50 text-red-700 border-red-200'
+                                  : 'bg-blue-50 text-blue-700 border-blue-200'
+                              }`}
+                            >
+                              {sub.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSubmissionToDelete(sub.id);
+                                }}
+                                className="text-red-400 hover:text-red-600 transition-colors p-2 hover:bg-red-50 rounded-lg"
+                                title="Excluir"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                              <ChevronRight size={18} className="text-obs-dark/20" />
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         ) : (
           <>
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
@@ -1287,6 +1567,139 @@ export function Admin() {
                     <Trash2 size={18} />
                     Excluir
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedSubmission && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div
+              className="fixed inset-0 bg-obs-dark/60 backdrop-blur-sm transition-opacity"
+              onClick={() => setSelectedSubmission(null)}
+            ></div>
+
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+              &#8203;
+            </span>
+
+            <div className="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-obs-dark/10 relative z-10">
+              <div className="p-8">
+                <div className="flex justify-between items-start mb-8">
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                        selectedSubmission.status === 'Pendente'
+                          ? 'bg-obs-gold/10 text-obs-dark border-obs-gold/20'
+                          : selectedSubmission.status === 'Aceito'
+                          ? 'bg-green-50 text-green-700 border-green-200'
+                          : selectedSubmission.status === 'Rejeitado'
+                          ? 'bg-red-50 text-red-700 border-red-200'
+                          : 'bg-blue-50 text-blue-700 border-blue-200'
+                      }`}>
+                        {selectedSubmission.status}
+                      </span>
+                      <span className="text-xs text-obs-dark/40 flex items-center gap-1">
+                        <Calendar size={12} />
+                        {new Date(selectedSubmission.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-bold text-obs-dark leading-tight">
+                      {selectedSubmission.title}
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setSelectedSubmission(null)}
+                    className="text-obs-dark/40 hover:text-obs-dark p-2 rounded-full hover:bg-obs-bg transition-colors"
+                  >
+                    <X size={24} />
+                  </button>
+                </div>
+
+                <div className="bg-obs-bg/30 rounded-2xl p-6 mb-8 border border-obs-dark/5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-white p-2 rounded-lg text-obs-dark/40 border border-obs-dark/5">
+                        <User size={18} />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-obs-dark/40 uppercase tracking-wider mb-0.5">Autor</p>
+                        <p className="text-sm font-bold text-obs-dark">{selectedSubmission.name}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="bg-white p-2 rounded-lg text-obs-dark/40 border border-obs-dark/5">
+                        <Mail size={18} />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-obs-dark/40 uppercase tracking-wider mb-0.5">E-mail</p>
+                        <a href={`mailto:${selectedSubmission.email}`} className="text-sm font-bold text-obs-light hover:underline">{selectedSubmission.email}</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-8">
+                  <p className="text-[10px] font-bold text-obs-dark/40 uppercase tracking-wider mb-4">Resumo / Abstract</p>
+                  <div className="text-obs-dark/80 font-serif leading-relaxed whitespace-pre-wrap bg-white border border-obs-dark/5 p-6 rounded-2xl max-h-48 overflow-y-auto">
+                    {selectedSubmission.abstract}
+                  </div>
+                </div>
+
+                <div className="mb-10">
+                  <p className="text-[10px] font-bold text-obs-dark/40 uppercase tracking-wider mb-4">Arquivo Enviado</p>
+                  <a 
+                    href={selectedSubmission.fileUrl} 
+                    download={selectedSubmission.fileName}
+                    className="flex items-center justify-between p-4 bg-obs-dark/5 border border-obs-dark/10 rounded-2xl hover:bg-obs-dark/10 transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="bg-white p-2 rounded-lg text-obs-teal shadow-sm">
+                        <FileText size={20} />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-obs-dark line-clamp-1">{selectedSubmission.fileName}</span>
+                        <span className="text-[10px] text-obs-dark/40 uppercase tracking-widest font-bold">Documento Word</span>
+                      </div>
+                    </div>
+                    <Download size={20} className="text-obs-dark/20 group-hover:text-obs-dark transition-colors" />
+                  </a>
+                </div>
+
+                <div className="flex flex-col gap-6 pt-6 border-t border-obs-bg">
+                  <div>
+                    <p className="text-[10px] font-bold text-obs-dark/40 uppercase tracking-wider mb-4">Alterar Status</p>
+                    <div className="flex flex-wrap gap-2">
+                      {['Pendente', 'Em Avaliação', 'Aceito', 'Rejeitado'].map((status) => (
+                        <button
+                          key={status}
+                          onClick={() => handleUpdateSubmissionStatus(selectedSubmission.id, status as Submission['status'])}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                            selectedSubmission.status === status
+                              ? 'bg-obs-dark text-white border-obs-dark'
+                              : 'bg-white text-obs-dark/60 border-obs-dark/10 hover:border-obs-dark/30'
+                          }`}
+                        >
+                          {status}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => {
+                        setSubmissionToDelete(selectedSubmission.id);
+                      }}
+                      className="flex-1 px-6 py-3 rounded-xl font-bold text-red-500 hover:bg-red-50 transition-all flex items-center justify-center gap-2 border border-red-100"
+                    >
+                      <Trash2 size={18} />
+                      Excluir Submissão
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1853,6 +2266,34 @@ export function Admin() {
                   </div>
                 </form>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {submissionToDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-obs-dark/60 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-obs-dark/10 animate-in zoom-in-95 duration-200">
+            <div className="bg-red-50 w-16 h-16 rounded-2xl flex items-center justify-center text-red-500 mb-6 mx-auto">
+              <AlertTriangle size={32} />
+            </div>
+            <h3 className="text-2xl font-bold text-obs-dark text-center mb-2">Excluir Submissão?</h3>
+            <p className="text-obs-dark/60 text-center mb-8 font-serif">
+              Esta ação não pode ser desfeita. O arquivo e os dados da submissão serão removidos permanentemente.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setSubmissionToDelete(null)}
+                className="flex-1 px-6 py-3 rounded-xl font-bold text-obs-dark hover:bg-obs-bg transition-all"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={executeDeleteSubmission}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-red-500/20"
+              >
+                Excluir
+              </button>
             </div>
           </div>
         </div>

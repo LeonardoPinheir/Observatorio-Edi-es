@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, BookOpen } from 'lucide-react';
 
@@ -12,7 +12,7 @@ export function Navbar() {
     { name: 'Sobre', href: isHome ? '#sobre' : '/#sobre' },
     { name: 'Publicações', href: '/publicacoes' },
     { name: 'Chamadas', href: isHome ? '#chamadas' : '/#chamadas' },
-    { name: 'Submissões', href: isHome ? '#submissoes' : '/#submissoes' },
+    { name: 'Submissões', href: '/submissoes' },
     { name: 'Equipe', href: isHome ? '#equipe' : '/#equipe' },
     { name: 'Contato', href: isHome ? '#contato' : '/#contato' },
   ];

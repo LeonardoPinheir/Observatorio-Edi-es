@@ -267,6 +267,25 @@ export interface TeamMember {
   order: number;
 }
 
+export interface Submission {
+  id: string;
+  name: string;
+  email: string;
+  title: string;
+  abstract: string;
+  fileUrl: string;
+  fileName: string;
+  date: string;
+  status: 'Pendente' | 'Em Avaliação' | 'Aceito' | 'Rejeitado';
+}
+
+export interface SubmissionTemplate {
+  id: string;
+  fileUrl: string;
+  fileName: string;
+  updatedAt: string;
+}
+
 export const getMessages = async (): Promise<Message[]> => {
   if (supabase) {
     const { data, error } = await supabase
@@ -372,6 +391,175 @@ export const deleteMessage = async (id: string) => {
 export const getUnreadMessagesCount = async (): Promise<number> => {
   const messages = await getMessages();
   return messages.filter(m => m.status === 'Não lida').length;
+};
+
+// Submissions
+export const getSubmissions = async (): Promise<Submission[]> => {
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('submissions')
+      .select('*')
+      .order('date', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching submissions from Supabase:', error);
+    } else if (data) {
+      return data as Submission[];
+    }
+  }
+
+  const stored = localStorage.getItem('obs_submissions');
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.error("Failed to parse submissions from localStorage", e);
+    }
+  }
+  return [];
+};
+
+export const addSubmission = async (submission: Omit<Submission, 'id' | 'date' | 'status'>) => {
+  const newSubmissionData = {
+    ...submission,
+    date: new Date().toISOString(),
+    status: 'Pendente'
+  };
+
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('submissions')
+      .insert([newSubmissionData])
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error adding submission to Supabase:', error);
+      throw error;
+    } else if (data) {
+      window.dispatchEvent(new Event('submissionsUpdated'));
+      return data as Submission;
+    }
+  }
+
+  const submissions = await getSubmissions();
+  const newSubmission: Submission = {
+    ...newSubmissionData,
+    id: Date.now().toString(),
+    status: 'Pendente'
+  };
+  const updatedSubmissions = [newSubmission, ...submissions];
+  localStorage.setItem('obs_submissions', JSON.stringify(updatedSubmissions));
+  window.dispatchEvent(new Event('submissionsUpdated'));
+  return newSubmission;
+};
+
+export const updateSubmissionStatus = async (id: string, status: Submission['status']) => {
+  if (supabase) {
+    const { error } = await supabase
+      .from('submissions')
+      .update({ status })
+      .eq('id', id);
+    
+    if (error) {
+      console.error('Error updating submission status in Supabase:', error);
+    } else {
+      window.dispatchEvent(new Event('submissionsUpdated'));
+      return;
+    }
+  }
+
+  const submissions = await getSubmissions();
+  const updated = submissions.map(s => s.id === id ? { ...s, status } : s);
+  localStorage.setItem('obs_submissions', JSON.stringify(updated));
+  window.dispatchEvent(new Event('submissionsUpdated'));
+};
+
+export const deleteSubmission = async (id: string) => {
+  if (supabase) {
+    const { error } = await supabase
+      .from('submissions')
+      .delete()
+      .eq('id', id);
+    
+    if (error) {
+      console.error('Error deleting submission from Supabase:', error);
+    } else {
+      window.dispatchEvent(new Event('submissionsUpdated'));
+      return;
+    }
+  }
+
+  const submissions = await getSubmissions();
+  const updated = submissions.filter(s => s.id !== id);
+  localStorage.setItem('obs_submissions', JSON.stringify(updated));
+  window.dispatchEvent(new Event('submissionsUpdated'));
+};
+
+// Template
+export const getSubmissionTemplate = async (): Promise<SubmissionTemplate | null> => {
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('submission_templates')
+      .select('*')
+      .single();
+    
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error fetching template from Supabase:', error);
+    } else if (data) {
+      return data as SubmissionTemplate;
+    }
+  }
+
+  const stored = localStorage.getItem('obs_submission_template');
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.error("Failed to parse template from localStorage", e);
+    }
+  }
+  return null;
+};
+
+export const updateSubmissionTemplate = async (template: Omit<SubmissionTemplate, 'id' | 'updatedAt'>) => {
+  const newTemplateData = {
+    ...template,
+    updatedAt: new Date().toISOString()
+  };
+
+  if (supabase) {
+    const existing = await getSubmissionTemplate();
+    if (existing) {
+      const { error } = await supabase
+        .from('submission_templates')
+        .update(newTemplateData)
+        .eq('id', existing.id);
+      
+      if (error) {
+        console.error('Error updating template in Supabase:', error);
+        throw error;
+      }
+    } else {
+      const { error } = await supabase
+        .from('submission_templates')
+        .insert([newTemplateData]);
+      
+      if (error) {
+        console.error('Error inserting template in Supabase:', error);
+        throw error;
+      }
+    }
+    window.dispatchEvent(new Event('templateUpdated'));
+    return;
+  }
+
+  const newTemplate: SubmissionTemplate = {
+    ...newTemplateData,
+    id: '1'
+  };
+  localStorage.setItem('obs_submission_template', JSON.stringify(newTemplate));
+  window.dispatchEvent(new Event('templateUpdated'));
 };
 
 // Calls
