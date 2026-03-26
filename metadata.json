@@ -1,0 +1,5 @@
+{
+  "name": "Observatorio edições",
+  "description": "Plataforma de publicações acadêmicas com painel administrativo e integração com Supabase.",
+  "requestFramePermissions": []
+}
