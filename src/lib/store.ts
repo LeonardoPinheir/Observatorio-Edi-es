@@ -132,7 +132,7 @@ export const getBooks = async (): Promise<Book[]> => {
     
     if (error) {
       console.error('Error fetching books from Supabase:', error);
-    } else if (data && data.length > 0) {
+    } else if (data) {
       return data.map(mapDBToBook);
     }
   }

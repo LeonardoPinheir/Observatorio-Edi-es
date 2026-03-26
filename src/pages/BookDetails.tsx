@@ -14,6 +14,7 @@ export function BookDetails() {
         const foundBook = await getBookById(id);
         if (foundBook) {
           setBook(foundBook);
+          document.title = `${foundBook.title} | Observatório Edições`;
         } else {
           // Handle book not found, maybe redirect or show error
           navigate('/');

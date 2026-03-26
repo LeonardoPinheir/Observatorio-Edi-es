@@ -18,6 +18,16 @@ export function Publications() {
       setBooks(booksData.filter(b => b.status === 'Publicado'));
     };
     fetchData();
+
+    window.addEventListener('booksUpdated', fetchData);
+    window.addEventListener('storage', fetchData);
+    
+    document.title = "Publicações | Observatório Edições";
+
+    return () => {
+      window.removeEventListener('booksUpdated', fetchData);
+      window.removeEventListener('storage', fetchData);
+    };
   }, []);
 
   // Extract unique values for filters

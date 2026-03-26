@@ -75,6 +75,8 @@ export function Admin() {
     };
 
     fetchData();
+    
+    document.title = "Painel Administrativo | Observatório Edições";
 
     const handleUpdate = async () => {
       const booksData = await getBooks();

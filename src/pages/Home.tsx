@@ -59,6 +59,8 @@ export function Home() {
     };
 
     fetchData();
+    
+    document.title = "Observatório Edições | Início";
 
     const handleUpdate = async () => {
       const [booksData, callsData, teamData] = await Promise.all([
