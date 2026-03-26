@@ -50,7 +50,7 @@ export function Login() {
           <div className="bg-white/10 p-5 rounded-2xl backdrop-blur-md mb-8 border border-white/10">
             {/* Logo Image - Replace src with your actual logo file path */}
             <img 
-              src="https://storage.googleapis.com/static.antigravity.ai/projects/7cqk2mqdsc4i5xnqct275m/assets/logo_observatorio.png" 
+              src="/logo_observatorio.png" 
               alt="Observatório Edições" 
               className="h-20 w-auto object-contain brightness-0 invert"
               referrerPolicy="no-referrer"
@@ -72,7 +72,7 @@ export function Login() {
         <div className="max-w-md w-full mx-auto">
           <div className="mb-10 lg:hidden flex items-center justify-center">
             <img 
-              src="https://storage.googleapis.com/static.antigravity.ai/projects/7cqk2mqdsc4i5xnqct275m/assets/logo_observatorio.png" 
+              src="/logo_observatorio.png" 
               alt="Observatório Edições" 
               className="h-12 w-auto object-contain"
               referrerPolicy="no-referrer"
