@@ -137,6 +137,10 @@ VALUES ('submissions', 'submissions', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- Storage policies for the 'submissions' bucket
+DROP POLICY IF EXISTS "Public Access" ON storage.objects;
+DROP POLICY IF EXISTS "Anyone can upload submissions" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can manage submissions" ON storage.objects;
+
 CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = 'submissions');
 CREATE POLICY "Anyone can upload submissions" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'submissions');
 CREATE POLICY "Authenticated users can manage submissions" ON storage.objects FOR ALL TO authenticated USING (bucket_id = 'submissions');

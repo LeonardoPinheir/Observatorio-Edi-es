@@ -1124,11 +1124,23 @@ export function Admin() {
                     </p>
                     <div className="flex items-center gap-2">
                       {template ? (
-                        <span className="text-xs font-bold text-obs-dark truncate max-w-[100px]">{template.fileName}</span>
+                        <>
+                          <span className="text-xs font-bold text-obs-dark truncate max-w-[100px]">
+                            {template.id === 'default' ? 'Padrão (modelo.txt)' : template.fileName}
+                          </span>
+                          <a 
+                            href={template.fileUrl} 
+                            download={template.fileName}
+                            className="text-obs-teal hover:text-obs-dark transition-colors"
+                            title="Baixar template atual"
+                          >
+                            <Download size={14} />
+                          </a>
+                        </>
                       ) : (
                         <span className="text-xs text-obs-dark/40 italic">Não definido</span>
                       )}
-                      <label className="cursor-pointer text-obs-light hover:text-obs-dark transition-colors">
+                      <label className="cursor-pointer text-obs-light hover:text-obs-dark transition-colors" title="Upload novo template">
                         <Upload size={14} />
                         <input type="file" accept=".doc,.docx" className="hidden" onChange={handleTemplateUpload} />
                       </label>

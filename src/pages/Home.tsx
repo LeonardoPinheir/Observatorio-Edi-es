@@ -4,13 +4,14 @@ import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { BookCard } from '../components/BookCard';
 import { CallCard } from '../components/CallCard';
-import { getBooks, Book, addMessage, getCalls, getTeam, Call, TeamMember } from '../lib/store';
+import { getBooks, Book, addMessage, getCalls, getTeam, Call, TeamMember, getSubmissionTemplate } from '../lib/store';
 import { ArrowRight, BookOpen, FileText, Send, Users, Mail, MapPin, ExternalLink, Download, CheckCircle2 } from 'lucide-react';
 
 export function Home() {
   const [books, setBooks] = useState<Book[]>([]);
   const [calls, setCalls] = useState<Call[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
+  const [template, setTemplate] = useState<{ fileUrl: string, fileName: string } | null>(null);
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [formData, setFormData] = useState({
     name: '',
@@ -48,14 +49,16 @@ export function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [booksData, callsData, teamData] = await Promise.all([
+      const [booksData, callsData, teamData, templateData] = await Promise.all([
         getBooks(),
         getCalls(),
-        getTeam()
+        getTeam(),
+        getSubmissionTemplate()
       ]);
       setBooks(booksData);
       setCalls(callsData);
       setTeam(teamData);
+      setTemplate(templateData);
     };
 
     fetchData();
@@ -126,10 +129,10 @@ export function Home() {
                   <BookOpen size={20} />
                   Ver publicações
                 </Link>
-                <a href="#submissoes" className="bg-white hover:bg-obs-bg text-obs-dark border border-obs-dark/10 px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
+                <Link to="/submissoes" className="bg-white hover:bg-obs-bg text-obs-dark border border-obs-dark/10 px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
                   <Send size={20} className="text-obs-teal" />
                   Submeter trabalho
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -265,14 +268,30 @@ export function Home() {
                 </div>
 
                 <div className="mt-12 flex flex-col sm:flex-row gap-4">
-                  <button className="bg-obs-gold hover:bg-white text-obs-dark px-8 py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
+                  <Link to="/submissoes" className="bg-obs-gold hover:bg-white text-obs-dark px-8 py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
                     <Send size={20} />
                     Acessar Formulário
-                  </button>
-                  <button className="bg-transparent border border-white/20 hover:bg-white/10 text-white px-8 py-4 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
-                    <Download size={20} />
-                    Baixar Template
-                  </button>
+                  </Link>
+                  {template ? (
+                    <a 
+                      href={template.fileUrl} 
+                      download={template.fileName}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-transparent border border-white/20 hover:bg-white/10 text-white px-8 py-4 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Download size={20} />
+                      Baixar Template
+                    </a>
+                  ) : (
+                    <button 
+                      disabled
+                      className="bg-transparent border border-white/10 text-white/30 px-8 py-4 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-not-allowed"
+                    >
+                      <Download size={20} />
+                      Template Indisponível
+                    </button>
+                  )}
                 </div>
               </div>
               

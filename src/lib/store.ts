@@ -167,12 +167,23 @@ const mapDBToTemplate = (db: any): SubmissionTemplate => {
   };
 };
 
+const sanitizeFileName = (fileName: string): string => {
+  return fileName
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove accents
+    .replace(/[^a-zA-Z0-9.-]/g, '_') // Replace special characters and spaces with underscores
+    .replace(/_{2,}/g, '_'); // Replace multiple underscores with a single one
+};
+
 const uploadFile = async (file: File, path: string): Promise<string> => {
   if (!supabase) throw new Error('Supabase not configured');
 
+  // Sanitize the path but keep directory structure if present
+  const sanitizedPath = path.split('/').map(part => sanitizeFileName(part)).join('/');
+
   const { data, error } = await supabase.storage
     .from('submissions')
-    .upload(path, file, {
+    .upload(sanitizedPath, file, {
       upsert: true
     });
 
@@ -597,7 +608,14 @@ export const getSubmissionTemplate = async (): Promise<SubmissionTemplate | null
       console.error("Failed to parse template from localStorage", e);
     }
   }
-  return null;
+
+  // Fallback to default template if nothing else is found
+  return {
+    id: 'default',
+    fileName: 'template-modelo.txt',
+    fileUrl: '/template-modelo.txt',
+    updatedAt: new Date().toISOString()
+  };
 };
 
 export const updateSubmissionTemplate = async (template: Omit<SubmissionTemplate, 'id' | 'updatedAt' | 'fileUrl'> & { file?: File, fileUrl?: string }) => {
