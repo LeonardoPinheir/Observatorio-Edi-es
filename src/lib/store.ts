@@ -167,6 +167,27 @@ const mapDBToTemplate = (db: any): SubmissionTemplate => {
   };
 };
 
+const uploadFile = async (file: File, path: string): Promise<string> => {
+  if (!supabase) throw new Error('Supabase not configured');
+
+  const { data, error } = await supabase.storage
+    .from('submissions')
+    .upload(path, file, {
+      upsert: true
+    });
+
+  if (error) {
+    console.error('Error uploading file to Supabase Storage:', error);
+    throw error;
+  }
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('submissions')
+    .getPublicUrl(data.path);
+
+  return publicUrl;
+};
+
 export const getBooks = async (): Promise<Book[]> => {
   if (supabase) {
     const { data, error } = await supabase
@@ -463,9 +484,21 @@ export const getSubmissions = async (): Promise<Submission[]> => {
   return [];
 };
 
-export const addSubmission = async (submission: Omit<Submission, 'id' | 'date' | 'status'>) => {
+export const addSubmission = async (submission: Omit<Submission, 'id' | 'date' | 'status' | 'fileUrl'> & { file?: File, fileUrl?: string }) => {
+  let fileUrl = submission.fileUrl || '';
+  
+  if (supabase && submission.file) {
+    const fileName = `${Date.now()}-${submission.file.name}`;
+    fileUrl = await uploadFile(submission.file, `submissions/${fileName}`);
+  }
+
   const newSubmissionData: Omit<Submission, 'id'> = {
-    ...submission,
+    name: submission.name,
+    email: submission.email,
+    title: submission.title,
+    abstract: submission.abstract,
+    fileName: submission.fileName,
+    fileUrl: fileUrl,
     date: new Date().toISOString(),
     status: 'Pendente'
   };
@@ -567,9 +600,16 @@ export const getSubmissionTemplate = async (): Promise<SubmissionTemplate | null
   return null;
 };
 
-export const updateSubmissionTemplate = async (template: Omit<SubmissionTemplate, 'id' | 'updatedAt'>) => {
+export const updateSubmissionTemplate = async (template: Omit<SubmissionTemplate, 'id' | 'updatedAt' | 'fileUrl'> & { file?: File, fileUrl?: string }) => {
+  let fileUrl = template.fileUrl || '';
+
+  if (supabase && template.file) {
+    fileUrl = await uploadFile(template.file, `templates/${template.file.name}`);
+  }
+
   const newTemplateData = {
-    ...template,
+    fileName: template.fileName,
+    fileUrl: fileUrl,
     updatedAt: new Date().toISOString()
   };
 

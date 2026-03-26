@@ -40,14 +40,6 @@ export function Submissions() {
     }
   };
 
-  const fileToBase64 = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = error => reject(error);
-    });
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file) {
@@ -59,10 +51,9 @@ export function Submissions() {
     setSubmitStatus('idle');
 
     try {
-      const base64 = await fileToBase64(file);
       await addSubmission({
         ...formData,
-        fileUrl: base64,
+        file: file,
         fileName: file.name,
       });
       setSubmitStatus('success');
@@ -71,7 +62,7 @@ export function Submissions() {
     } catch (error) {
       console.error('Error submitting:', error);
       setSubmitStatus('error');
-      setErrorMessage('Ocorreu um erro ao enviar sua submissão. Tente novamente mais tarde.');
+      setErrorMessage(`Ocorreu um erro ao enviar sua submissão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     } finally {
       setIsSubmitting(false);
     }

@@ -282,16 +282,15 @@ export function Admin() {
 
     setIsLoading(true);
     try {
-      const base64 = await fileToBase64(file);
       await updateSubmissionTemplate({
-        fileUrl: base64,
+        file: file,
         fileName: file.name
       });
       setSuccessMessage('Novo template definido!');
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       console.error('Error updating template:', error);
-      alert('Erro ao atualizar template.');
+      alert(`Erro ao atualizar template: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     } finally {
       setIsLoading(false);
     }
@@ -817,7 +816,7 @@ export function Admin() {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => handleEdit(book)}
                                 className="text-obs-light hover:text-obs-dark transition-colors p-2 hover:bg-obs-bg rounded-lg"
@@ -946,7 +945,7 @@ export function Admin() {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => handleEditCall(call)}
                                 className="text-obs-light hover:text-obs-dark transition-colors p-2 hover:bg-obs-bg rounded-lg"
@@ -1067,7 +1066,7 @@ export function Admin() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => handleEditTeam(member)}
                                 className="text-obs-light hover:text-obs-dark transition-colors p-2 hover:bg-obs-bg rounded-lg"
@@ -1239,7 +1238,7 @@ export function Admin() {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -1389,7 +1388,7 @@ export function Admin() {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();

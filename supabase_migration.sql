@@ -128,3 +128,15 @@ CREATE POLICY "Admin full access for open_calls" ON open_calls FOR ALL USING (TR
 CREATE POLICY "Admin full access for team_members" ON team_members FOR ALL USING (TRUE);
 CREATE POLICY "Admin full access for submissions" ON submissions FOR ALL USING (TRUE);
 CREATE POLICY "Admin full access for submission_templates" ON submission_templates FOR ALL USING (TRUE);
+
+-- Storage setup (if storage schema exists)
+-- Note: This might require manual setup in the Supabase dashboard if the SQL editor doesn't have permissions for the storage schema.
+-- Create a bucket for submissions and templates
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('submissions', 'submissions', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Storage policies for the 'submissions' bucket
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = 'submissions');
+CREATE POLICY "Anyone can upload submissions" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'submissions');
+CREATE POLICY "Authenticated users can manage submissions" ON storage.objects FOR ALL TO authenticated USING (bucket_id = 'submissions');
