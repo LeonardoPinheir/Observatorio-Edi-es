@@ -74,8 +74,8 @@ CREATE TABLE IF NOT EXISTS submissions (
   email TEXT NOT NULL,
   title TEXT NOT NULL,
   abstract TEXT NOT NULL,
-  file_url TEXT NOT NULL,
-  file_name TEXT NOT NULL,
+  fileurl TEXT NOT NULL,
+  filename TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'Pendente',
   date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -83,9 +83,9 @@ CREATE TABLE IF NOT EXISTS submissions (
 -- Submission Templates table
 CREATE TABLE IF NOT EXISTS submission_templates (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  file_url TEXT NOT NULL,
-  file_name TEXT NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  fileurl TEXT NOT NULL,
+  filename TEXT NOT NULL,
+  updatedat TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Enable Row Level Security (RLS)

@@ -129,8 +129,8 @@ const mapSubmissionToDB = (submission: Partial<Submission>) => {
   if (submission.email !== undefined) db.email = submission.email;
   if (submission.title !== undefined) db.title = submission.title;
   if (submission.abstract !== undefined) db.abstract = submission.abstract;
-  if (submission.fileUrl !== undefined) db.file_url = submission.fileUrl;
-  if (submission.fileName !== undefined) db.file_name = submission.fileName;
+  if (submission.fileUrl !== undefined) db.fileurl = submission.fileUrl;
+  if (submission.fileName !== undefined) db.filename = submission.fileName;
   if (submission.date !== undefined) db.date = submission.date;
   if (submission.status !== undefined) db.status = submission.status;
   return db;
@@ -143,8 +143,8 @@ const mapDBToSubmission = (db: any): Submission => {
     email: db.email,
     title: db.title,
     abstract: db.abstract,
-    fileUrl: db.file_url,
-    fileName: db.file_name,
+    fileUrl: db.fileurl || db.file_url || '',
+    fileName: db.filename || db.file_name || '',
     date: db.date,
     status: db.status
   };
@@ -152,18 +152,18 @@ const mapDBToSubmission = (db: any): Submission => {
 
 const mapTemplateToDB = (template: Partial<SubmissionTemplate>) => {
   const db: any = {};
-  if (template.fileUrl !== undefined) db.file_url = template.fileUrl;
-  if (template.fileName !== undefined) db.file_name = template.fileName;
-  if (template.updatedAt !== undefined) db.updated_at = template.updatedAt;
+  if (template.fileUrl !== undefined) db.fileurl = template.fileUrl;
+  if (template.fileName !== undefined) db.filename = template.fileName;
+  if (template.updatedAt !== undefined) db.updatedat = template.updatedAt;
   return db;
 };
 
 const mapDBToTemplate = (db: any): SubmissionTemplate => {
   return {
     id: db.id,
-    fileUrl: db.file_url,
-    fileName: db.file_name,
-    updatedAt: db.updated_at
+    fileUrl: db.fileurl || db.file_url || '',
+    fileName: db.filename || db.file_name || '',
+    updatedAt: db.updatedat || db.updated_at || new Date().toISOString()
   };
 };
 
@@ -524,7 +524,8 @@ export const addSubmission = async (submission: Omit<Submission, 'id' | 'date' |
     
     if (error) {
       console.error('Error adding submission to Supabase:', error);
-      throw error;
+      const errorMessage = error.message || (typeof error === 'string' ? error : JSON.stringify(error));
+      throw new Error(errorMessage);
     } else if (data) {
       window.dispatchEvent(new Event('submissionsUpdated'));
       return mapDBToSubmission(data);
@@ -632,14 +633,18 @@ export const updateSubmissionTemplate = async (template: Omit<SubmissionTemplate
   };
 
   if (supabase) {
-    const existing = await getSubmissionTemplate();
+    const { data: existingData } = await supabase
+      .from('submission_templates')
+      .select('id')
+      .single();
+      
     const dbTemplate = mapTemplateToDB(newTemplateData);
     
-    if (existing) {
+    if (existingData) {
       const { error } = await supabase
         .from('submission_templates')
         .update(dbTemplate)
-        .eq('id', existing.id);
+        .eq('id', existingData.id);
       
       if (error) {
         console.error('Error updating template in Supabase:', error);

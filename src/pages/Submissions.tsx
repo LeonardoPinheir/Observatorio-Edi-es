@@ -59,10 +59,11 @@ export function Submissions() {
       setSubmitStatus('success');
       setFormData({ name: '', email: '', title: '', abstract: '' });
       setFile(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting:', error);
       setSubmitStatus('error');
-      setErrorMessage(`Ocorreu um erro ao enviar sua submissão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+      const msg = error.message || (typeof error === 'string' ? error : JSON.stringify(error));
+      setErrorMessage(`Ocorreu um erro ao enviar sua submissão: ${msg}`);
     } finally {
       setIsSubmitting(false);
     }

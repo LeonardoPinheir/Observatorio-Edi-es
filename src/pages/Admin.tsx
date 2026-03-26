@@ -288,9 +288,10 @@ export function Admin() {
       });
       setSuccessMessage('Novo template definido!');
       setTimeout(() => setSuccessMessage(''), 3000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating template:', error);
-      alert(`Erro ao atualizar template: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+      const msg = error.message || (typeof error === 'string' ? error : JSON.stringify(error));
+      alert(`Erro ao atualizar template: ${msg}`);
     } finally {
       setIsLoading(false);
     }
@@ -1122,26 +1123,31 @@ export function Admin() {
                     <p className="text-xs font-semibold text-obs-dark/50 uppercase tracking-wider">
                       Template
                     </p>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       {template ? (
                         <>
-                          <span className="text-xs font-bold text-obs-dark truncate max-w-[100px]">
-                            {template.id === 'default' ? 'Padrão (modelo.txt)' : template.fileName}
-                          </span>
+                          <div className="flex flex-col">
+                            <span className="text-xs font-bold text-obs-dark truncate max-w-[150px]">
+                              {template.id === 'default' ? 'Padrão (modelo.txt)' : template.fileName}
+                            </span>
+                            <span className="text-[10px] text-obs-dark/40">
+                              Atualizado em: {new Date(template.updatedAt).toLocaleDateString('pt-BR')}
+                            </span>
+                          </div>
                           <a 
                             href={template.fileUrl} 
                             download={template.fileName}
-                            className="text-obs-teal hover:text-obs-dark transition-colors"
+                            className="bg-obs-teal/10 p-2 rounded-lg text-obs-teal hover:bg-obs-teal hover:text-white transition-all"
                             title="Baixar template atual"
                           >
-                            <Download size={14} />
+                            <Download size={16} />
                           </a>
                         </>
                       ) : (
                         <span className="text-xs text-obs-dark/40 italic">Não definido</span>
                       )}
-                      <label className="cursor-pointer text-obs-light hover:text-obs-dark transition-colors" title="Upload novo template">
-                        <Upload size={14} />
+                      <label className="cursor-pointer bg-obs-light/10 p-2 rounded-lg text-obs-light hover:bg-obs-light hover:text-white transition-all" title="Upload novo template">
+                        <Upload size={16} />
                         <input type="file" accept=".doc,.docx" className="hidden" onChange={handleTemplateUpload} />
                       </label>
                     </div>
