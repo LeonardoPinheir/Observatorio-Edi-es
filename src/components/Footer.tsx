@@ -30,10 +30,10 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-6 text-obs-gold">Links Rápidos</h3>
             <ul className="space-y-3 text-sm text-white/70">
-              <li><a href="/#sobre" className="hover:text-obs-light transition-colors">Sobre o Projeto</a></li>
-              <li><a href="/#publicacoes" className="hover:text-obs-light transition-colors">Publicações</a></li>
-              <li><a href="/#chamadas" className="hover:text-obs-light transition-colors">Chamadas Abertas</a></li>
-              <li><a href="/#submissoes" className="hover:text-obs-light transition-colors">Submissões</a></li>
+              <li><Link to="/#sobre" className="hover:text-obs-light transition-colors">Sobre o Projeto</Link></li>
+              <li><Link to="/publicacoes" className="hover:text-obs-light transition-colors">Catálogo de Publicações</Link></li>
+              <li><Link to="/#chamadas" className="hover:text-obs-light transition-colors">Chamadas Abertas</Link></li>
+              <li><Link to="/#submissoes" className="hover:text-obs-light transition-colors">Submissões</Link></li>
               <li><Link to="/login" className="hover:text-obs-teal transition-colors">Área Administrativa</Link></li>
             </ul>
           </div>

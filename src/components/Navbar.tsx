@@ -40,13 +40,13 @@ export function Navbar() {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
+                to={link.href}
                 className="text-sm font-medium text-obs-dark/80 hover:text-obs-light transition-colors"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
             <Link
               to="/login"
@@ -73,14 +73,14 @@ export function Navbar() {
         <div className="md:hidden bg-white border-b border-obs-bg">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
+                to={link.href}
                 onClick={() => setIsOpen(false)}
                 className="block px-3 py-2 rounded-md text-base font-medium text-obs-dark hover:text-obs-light hover:bg-obs-bg transition-colors"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
             <Link
               to="/login"
