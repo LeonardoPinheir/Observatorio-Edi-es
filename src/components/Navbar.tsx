@@ -17,6 +17,28 @@ export function Navbar() {
     { name: 'Contato', href: isHome ? '#contato' : '/#contato' },
   ];
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const element = document.getElementById(href.substring(1));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setIsOpen(false);
+      }
+    } else if (href.includes('#')) {
+      // If it's a link to home with a hash, and we are already on home
+      if (isHome) {
+        e.preventDefault();
+        const hash = href.split('#')[1];
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+          setIsOpen(false);
+        }
+      }
+    }
+  };
+
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-obs-bg shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,6 +65,7 @@ export function Navbar() {
               <Link
                 key={link.name}
                 to={link.href}
+                onClick={(e) => handleNavClick(e, link.href)}
                 className="text-sm font-medium text-obs-dark/80 hover:text-obs-light transition-colors"
               >
                 {link.name}
@@ -76,7 +99,7 @@ export function Navbar() {
               <Link
                 key={link.name}
                 to={link.href}
-                onClick={() => setIsOpen(false)}
+                onClick={(e) => handleNavClick(e, link.href)}
                 className="block px-3 py-2 rounded-md text-base font-medium text-obs-dark hover:text-obs-light hover:bg-obs-bg transition-colors"
               >
                 {link.name}

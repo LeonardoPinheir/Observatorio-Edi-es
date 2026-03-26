@@ -62,6 +62,17 @@ export function Home() {
     
     document.title = "Observatório Edições | Início";
 
+    // Handle scroll to hash on mount
+    if (window.location.hash) {
+      setTimeout(() => {
+        const id = window.location.hash.substring(1);
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 500);
+    }
+
     const handleUpdate = async () => {
       const [booksData, callsData, teamData] = await Promise.all([
         getBooks(),
