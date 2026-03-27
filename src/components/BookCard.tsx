@@ -3,7 +3,14 @@ import { Link } from 'react-router-dom';
 import { Book } from '../lib/store';
 import { Download, ExternalLink, BookOpen, ArrowRight } from 'lucide-react';
 
-export const BookCard: React.FC<{ book: Book }> = ({ book }) => {
+interface BookCardProps {
+  book: Book;
+  variant?: 'default' | 'featured';
+}
+
+export const BookCard: React.FC<BookCardProps> = ({ book, variant = 'default' }) => {
+  const isFeatured = variant === 'featured';
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-obs-bg overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col h-full group">
       <Link to={`/book/${book.id}`} className="relative aspect-[210/297] overflow-hidden bg-obs-bg block">
@@ -29,43 +36,49 @@ export const BookCard: React.FC<{ book: Book }> = ({ book }) => {
       </Link>
 
       <div className="p-6 flex flex-col flex-grow">
-        <Link to={`/book/${book.id}`} className="block">
-          <h3 className="text-xl font-bold text-obs-dark mb-1 leading-tight group-hover:text-obs-light transition-colors">
-            {book.title}
-          </h3>
-        </Link>
-        {book.subtitle && (
-          <h4 className="text-sm font-medium text-obs-dark/70 mb-3 leading-snug">
-            {book.subtitle}
-          </h4>
+        {!isFeatured && (
+          <>
+            <Link to={`/book/${book.id}`} className="block">
+              <h3 className="text-xl font-bold text-obs-dark mb-1 leading-tight group-hover:text-obs-light transition-colors">
+                {book.title}
+              </h3>
+            </Link>
+            {book.subtitle && (
+              <h4 className="text-sm font-medium text-obs-dark/70 mb-3 leading-snug">
+                {book.subtitle}
+              </h4>
+            )}
+
+            <div className="mb-4 space-y-1">
+              <p className="text-sm text-obs-teal font-medium">
+                <span className="text-obs-dark/50 text-xs uppercase tracking-wider mr-1">Autor(es):</span>
+                {book.authors}
+              </p>
+              {book.organizers && (
+                <p className="text-sm text-obs-teal font-medium">
+                  <span className="text-obs-dark/50 text-xs uppercase tracking-wider mr-1">Org(s):</span>
+                  {book.organizers}
+                </p>
+              )}
+            </div>
+
+            <p className="text-sm text-obs-dark/60 line-clamp-3 mb-6 flex-grow leading-relaxed">
+              {book.abstract}
+            </p>
+          </>
         )}
 
-        <div className="mb-4 space-y-1">
-          <p className="text-sm text-obs-teal font-medium">
-            <span className="text-obs-dark/50 text-xs uppercase tracking-wider mr-1">Autor(es):</span>
-            {book.authors}
-          </p>
-          {book.organizers && (
-            <p className="text-sm text-obs-teal font-medium">
-              <span className="text-obs-dark/50 text-xs uppercase tracking-wider mr-1">Org(s):</span>
-              {book.organizers}
-            </p>
-          )}
-        </div>
-
-        <p className="text-sm text-obs-dark/60 line-clamp-3 mb-6 flex-grow leading-relaxed">
-          {book.abstract}
-        </p>
-
         <div className="space-y-4 mt-auto">
-          <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-obs-dark/50">
-            {book.collection && <span>Coleção: {book.collection}</span>}
-            {book.volume && <span>Vol: {book.volume}</span>}
-            {book.year && <span>Ano: {book.year}</span>}
-            {book.isbn && <span>ISBN: {book.isbn}</span>}
-          </div>
+          {!isFeatured && (
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-obs-dark/50">
+              {book.collection && <span>Coleção: {book.collection}</span>}
+              {book.volume && <span>Vol: {book.volume}</span>}
+              {book.year && <span>Ano: {book.year}</span>}
+              {book.isbn && <span>ISBN: {book.isbn}</span>}
+            </div>
+          )}
 
-          <div className="flex items-center gap-3 pt-4 border-t border-obs-bg">
+          <div className={`flex items-center gap-3 ${!isFeatured ? 'pt-4 border-t border-obs-bg' : ''}`}>
             <Link 
               to={`/book/${book.id}`} 
               className="flex-1 bg-obs-dark hover:bg-obs-light text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
@@ -73,7 +86,7 @@ export const BookCard: React.FC<{ book: Book }> = ({ book }) => {
               <ArrowRight size={16} />
               Ver Detalhes
             </Link>
-            {(book.downloadLink || book.pdfUrl) && (
+            {!isFeatured && (book.downloadLink || book.pdfUrl) && (
               <a
                 href={book.pdfUrl || book.downloadLink}
                 download={`${book.title}.pdf`}
@@ -90,4 +103,4 @@ export const BookCard: React.FC<{ book: Book }> = ({ book }) => {
       </div>
     </div>
   );
-}
+};

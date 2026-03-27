@@ -1,4 +1,4 @@
-import { BookOpen, Mail, MapPin, Instagram, Linkedin } from 'lucide-react';
+import { BookOpen, Mail, MapPin, Instagram, Linkedin, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function Footer() {
@@ -20,8 +20,16 @@ export function Footer() {
           </div>
 
           <div className="text-sm text-white/90">
-            <p>
-              <span className="font-bold text-obs-gold">Contato:</span> E-mail: <a href="mailto:opajeuft@gmail.com" className="hover:text-obs-gold transition-colors underline underline-offset-4 decoration-obs-gold/30">opajeuft@gmail.com</a> <span className="mx-2 text-white/20">|</span> Telefone: +55 (63) 8402-8033
+            <p className="flex flex-wrap justify-center items-center gap-x-2 gap-y-1">
+              <span className="font-bold text-obs-gold">Contato:</span> 
+              <a href="mailto:opajeuft@gmail.com" className="hover:text-obs-gold transition-colors underline underline-offset-4 decoration-obs-gold/30 flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5" /> opajeuft@gmail.com
+              </a> 
+              <span className="mx-1 text-white/20">|</span> 
+              <span className="font-bold text-obs-gold">Telefone:</span>
+              <a href="tel:+556384028033" className="hover:text-obs-gold transition-colors flex items-center gap-1.5">
+                <Phone className="w-3.5 h-3.5" /> +55 (63) 8402-8033
+              </a>
             </p>
           </div>
 
@@ -47,7 +55,7 @@ export function Footer() {
           />
           <p className="text-sm text-obs-light italic font-serif opacity-80">Inovação, Cultura e Conhecimento</p>
           <div className="text-[10px] sm:text-xs text-white/40 pt-6 flex flex-wrap justify-center items-center gap-x-4 gap-y-2 uppercase tracking-widest">
-            <span>© 2024 Todos os direitos reservados</span>
+            <span>© Todos os direitos reservados</span>
             <span className="hidden sm:inline text-white/10">|</span>
             <a href="#" className="hover:text-white transition-colors">Política de Privacidade</a>
             <span className="hidden sm:inline text-white/10">|</span>

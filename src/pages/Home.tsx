@@ -178,47 +178,30 @@ export function Home() {
 
         {/* Featured Books Section */}
         {books.filter(b => b.isFeatured).length > 0 && (
-          <section className="py-16 bg-white border-b border-obs-dark/5">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex items-center gap-4 mb-10">
-                <div className="bg-obs-gold/10 p-2 rounded-lg text-obs-gold">
-                  <CheckCircle2 size={24} />
-                </div>
+          <section className="py-20 bg-obs-dark text-white overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-1/3 h-full bg-obs-light/5 -skew-x-12 translate-x-1/2"></div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-obs-dark tracking-tight">Destaques da Edição</h2>
-                  <p className="text-sm text-obs-dark/50 font-serif">Obras selecionadas pelo nosso conselho editorial</p>
+                  <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Destaques</h2>
+                  <div className="w-20 h-1.5 bg-obs-light rounded-full mb-6"></div>
                 </div>
-                <div className="flex-grow h-px bg-obs-dark/5 ml-4 hidden md:block"></div>
+                <Link 
+                  to="/publicacoes" 
+                  className="group flex items-center gap-2 text-obs-light font-medium hover:text-white transition-colors"
+                >
+                  Ver todo o catálogo
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {books
                   .filter(book => book.isFeatured)
-                  .slice(0, 2)
+                  .slice(0, 4)
                   .map((book) => (
-                    <div key={book.id} className="group relative bg-obs-bg/30 rounded-3xl p-6 hover:bg-obs-bg transition-all duration-500 border border-transparent hover:border-obs-dark/5">
-                      <div className="flex flex-col sm:flex-row gap-8 items-center sm:items-start">
-                        <div className="w-48 flex-shrink-0 shadow-2xl group-hover:scale-105 transition-transform duration-500">
-                          <BookCard book={book} />
-                        </div>
-                        <div className="flex flex-col justify-center py-2">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-obs-teal mb-3 bg-obs-teal/5 px-3 py-1 rounded-full w-fit">
-                            {book.type}
-                          </span>
-                          <h3 className="text-xl font-bold text-obs-dark mb-3 line-clamp-2 group-hover:text-obs-light transition-colors">
-                            {book.title}
-                          </h3>
-                          <p className="text-sm text-obs-dark/60 font-serif line-clamp-4 leading-relaxed mb-6">
-                            {book.abstract}
-                          </p>
-                          <Link 
-                            to={`/livro/${book.id}`}
-                            className="text-obs-dark font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all"
-                          >
-                            Conhecer obra <ArrowRight size={16} className="text-obs-gold" />
-                          </Link>
-                        </div>
-                      </div>
+                    <div key={book.id} className="bg-white/5 p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300">
+                      <BookCard book={book} variant="featured" />
                     </div>
                   ))}
               </div>
@@ -418,8 +401,8 @@ export function Home() {
                     </div>
                     <div>
                       <h4 className="font-bold text-obs-dark mb-1">E-mail Institucional</h4>
-                      <a href="mailto:contato@observatorioedicoes.com.br" className="text-obs-light hover:underline">
-                        contato@observatorioedicoes.com.br
+                      <a href="mailto:opajeuft@gmail.com" className="text-obs-light hover:underline">
+                        opajeuft@gmail.com
                       </a>
                     </div>
                   </div>
@@ -429,12 +412,14 @@ export function Home() {
                     </div>
                     <div>
                       <h4 className="font-bold text-obs-dark mb-1">Endereço</h4>
-                      <p className="text-obs-dark/70 text-sm leading-relaxed">
-                        Universidade Federal<br />
-                        Departamento de Comunicação Social<br />
-                        Prédio Central, Sala 204<br />
-                        Campus Universitário
-                      </p>
+                      <div className="text-obs-dark/70 text-sm leading-relaxed font-serif">
+                        <p className="mb-1">
+                          Universidade Federal do Tocantins / Núcleo de Pesquisa e Extensão Observatório de Pesquisas Aplicadas ao Jornalismo e ao Ensino (OPAJE-UFT)
+                        </p>
+                        <p>
+                          Bloco 1, 1º Andar, Salas 18-20, UFT - Campus Palmas - Avenida NS 15, 109 Norte - Plano Diretor Norte - Palmas - TO, 77001-090 Brasil
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

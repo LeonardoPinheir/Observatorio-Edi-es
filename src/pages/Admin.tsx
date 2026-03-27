@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
-  getBooks, addBook, updateBook, deleteBook, logout, isAuthenticated, Book, 
+  getBooks, addBook, updateBook, deleteBook, updateBookStatusesBulk, logout, isAuthenticated, Book, 
   getMessages, updateMessageStatus, deleteMessage, Message, getUnreadMessagesCount,
   getCalls, addCall, updateCall, deleteCall, Call,
   getTeam, addTeamMember, updateTeamMember, deleteTeamMember, TeamMember,
@@ -17,6 +17,8 @@ export function Admin() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'books' | 'messages' | 'calls' | 'team' | 'submissions'>('books');
   const [books, setBooks] = useState<Book[]>([]);
+  const [selectedBookIds, setSelectedBookIds] = useState<string[]>([]);
+  const [bulkStatus, setBulkStatus] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [template, setTemplate] = useState<SubmissionTemplate | null>(null);
@@ -152,13 +154,13 @@ export function Admin() {
 
   const openNewBookForm = () => {
     setCurrentBook({
-      type: 'Livro de autoria única',
+      type: 'Coletânea',
       status: 'Rascunho',
       isFeatured: false,
       year: new Date().getFullYear(),
       title: '',
       subtitle: '',
-      authors: '',
+      authors: 'Vários autores',
       organizers: '',
       publicationDate: '',
       collection: '',
@@ -265,8 +267,43 @@ export function Admin() {
       const booksData = await getBooks();
       setBooks(booksData);
       setBookToDelete(null);
+      setSelectedBookIds(prev => prev.filter(id => id !== bookToDelete));
       setSuccessMessage('Publicação excluída com sucesso!');
       setTimeout(() => setSuccessMessage(''), 3000);
+    }
+  };
+
+  const handleSelectBook = (id: string) => {
+    setSelectedBookIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAllBooks = () => {
+    if (selectedBookIds.length === filteredBooks.length) {
+      setSelectedBookIds([]);
+    } else {
+      setSelectedBookIds(filteredBooks.map(b => b.id));
+    }
+  };
+
+  const handleBulkStatusUpdate = async () => {
+    if (selectedBookIds.length === 0 || !bulkStatus) return;
+    
+    setIsLoading(true);
+    try {
+      await updateBookStatusesBulk(selectedBookIds, bulkStatus);
+      const booksData = await getBooks();
+      setBooks(booksData);
+      setSelectedBookIds([]);
+      setBulkStatus('');
+      setSuccessMessage(`${selectedBookIds.length} publicações atualizadas com sucesso!`);
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Error updating books in bulk:', error);
+      alert('Erro ao atualizar publicações em massa.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -734,12 +771,52 @@ export function Admin() {
                     </select>
                   </div>
                 </div>
+
+                {selectedBookIds.length > 0 && (
+                  <div className="flex items-center gap-3 bg-obs-gold/10 px-4 py-2 rounded-xl border border-obs-gold/20 animate-in fade-in zoom-in-95">
+                    <span className="text-xs font-bold text-obs-dark">
+                      {selectedBookIds.length} selecionados
+                    </span>
+                    <div className="h-4 w-px bg-obs-gold/20"></div>
+                    <select
+                      value={bulkStatus}
+                      onChange={e => setBulkStatus(e.target.value)}
+                      className="text-xs font-bold bg-transparent border-none focus:ring-0 text-obs-dark cursor-pointer"
+                    >
+                      <option value="">Alterar status para...</option>
+                      <option value="Publicado">Publicado</option>
+                      <option value="Rascunho">Rascunho</option>
+                      <option value="Arquivado">Arquivado</option>
+                    </select>
+                    <button
+                      onClick={handleBulkStatusUpdate}
+                      disabled={!bulkStatus || isLoading}
+                      className="bg-obs-dark text-white text-[10px] font-bold px-3 py-1.5 rounded-lg hover:bg-obs-light transition-all disabled:opacity-50"
+                    >
+                      Aplicar
+                    </button>
+                    <button
+                      onClick={() => setSelectedBookIds([])}
+                      className="text-obs-dark/40 hover:text-obs-dark transition-colors"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-obs-bg">
                   <thead className="bg-white">
                     <tr>
+                      <th className="px-6 py-4 text-left w-10">
+                        <input
+                          type="checkbox"
+                          checked={filteredBooks.length > 0 && selectedBookIds.length === filteredBooks.length}
+                          onChange={handleSelectAllBooks}
+                          className="w-4 h-4 rounded border-obs-dark/20 text-obs-dark focus:ring-obs-light"
+                        />
+                      </th>
                       <th className="px-6 py-4 text-left text-xs font-bold text-obs-dark/50 uppercase tracking-wider">
                         Publicação
                       </th>
@@ -770,7 +847,15 @@ export function Admin() {
                       </tr>
                     ) : (
                       filteredBooks.map(book => (
-                        <tr key={book.id} className="hover:bg-obs-bg/40 transition-colors group">
+                        <tr key={book.id} className={`hover:bg-obs-bg/40 transition-colors group ${selectedBookIds.includes(book.id) ? 'bg-obs-gold/5' : ''}`}>
+                          <td className="px-6 py-4">
+                            <input
+                              type="checkbox"
+                              checked={selectedBookIds.includes(book.id)}
+                              onChange={() => handleSelectBook(book.id)}
+                              className="w-4 h-4 rounded border-obs-dark/20 text-obs-dark focus:ring-obs-light"
+                            />
+                          </td>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-4">
                               <div className="w-12 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 border border-obs-dark/5">
@@ -1803,7 +1888,14 @@ export function Admin() {
                         <select
                           required
                           value={currentBook.type || ''}
-                          onChange={e => setCurrentBook({ ...currentBook, type: e.target.value })}
+                          onChange={e => {
+                            const newType = e.target.value;
+                            setCurrentBook({ 
+                              ...currentBook, 
+                              type: newType,
+                              authors: newType === 'Coletânea' ? 'Vários autores' : currentBook.authors
+                            });
+                          }}
                           className="w-full px-4 py-2.5 rounded-xl border border-obs-dark/10 focus:outline-none focus:ring-2 focus:ring-obs-light/50 bg-obs-bg/30"
                         >
                           <option value="Coletânea">Coletânea</option>

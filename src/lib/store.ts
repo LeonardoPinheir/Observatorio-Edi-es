@@ -295,6 +295,28 @@ export const updateBook = async (id: string, updates: Partial<Book>) => {
   window.dispatchEvent(new Event('booksUpdated'));
 };
 
+export const updateBookStatusesBulk = async (ids: string[], status: string) => {
+  if (supabase) {
+    const { error } = await supabase
+      .from('books')
+      .update({ status })
+      .in('id', ids);
+    
+    if (error) {
+      console.error('Error updating books in bulk in Supabase:', error);
+      throw error;
+    } else {
+      window.dispatchEvent(new Event('booksUpdated'));
+      return;
+    }
+  }
+
+  const books = await getBooks();
+  const updated = books.map(b => ids.includes(b.id) ? { ...b, status } : b);
+  localStorage.setItem('obs_books', JSON.stringify(updated));
+  window.dispatchEvent(new Event('booksUpdated'));
+};
+
 export const deleteBook = async (id: string) => {
   if (supabase) {
     const { error } = await supabase
