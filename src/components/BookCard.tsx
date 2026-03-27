@@ -36,19 +36,20 @@ export const BookCard: React.FC<BookCardProps> = ({ book, variant = 'default' })
       </Link>
 
       <div className="p-6 flex flex-col flex-grow">
+        <Link to={`/book/${book.id}`} className="block">
+          <h3 className={`font-bold text-obs-dark mb-1 leading-tight group-hover:text-obs-light transition-colors ${isFeatured ? 'text-lg' : 'text-xl'}`}>
+            {book.title}
+          </h3>
+        </Link>
+
+        {book.subtitle && (
+          <h4 className={`font-medium text-obs-dark/70 mb-3 leading-snug ${isFeatured ? 'text-xs' : 'text-sm'}`}>
+            {book.subtitle}
+          </h4>
+        )}
+        
         {!isFeatured && (
           <>
-            <Link to={`/book/${book.id}`} className="block">
-              <h3 className="text-xl font-bold text-obs-dark mb-1 leading-tight group-hover:text-obs-light transition-colors">
-                {book.title}
-              </h3>
-            </Link>
-            {book.subtitle && (
-              <h4 className="text-sm font-medium text-obs-dark/70 mb-3 leading-snug">
-                {book.subtitle}
-              </h4>
-            )}
-
             <div className="mb-4 space-y-1">
               <p className="text-sm text-obs-teal font-medium">
                 <span className="text-obs-dark/50 text-xs uppercase tracking-wider mr-1">Autor(es):</span>

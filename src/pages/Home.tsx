@@ -106,60 +106,78 @@ export function Home() {
 
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="relative pt-24 pb-28 overflow-hidden bg-obs-bg">
+        <section className="relative pt-20 pb-24 overflow-hidden bg-obs-bg">
           <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
-            {/* Subtle geometric patterns inspired by the logo */}
             <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-obs-light blur-3xl mix-blend-multiply"></div>
             <div className="absolute top-48 -left-24 w-72 h-72 rounded-full bg-obs-teal blur-3xl mix-blend-multiply"></div>
             <div className="absolute -bottom-24 right-1/3 w-80 h-80 rounded-full bg-obs-gold blur-3xl mix-blend-multiply"></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="max-w-3xl">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-obs-dark leading-tight mb-8 tracking-tight">
-                Publicações acadêmicas em acesso aberto para ampliar a circulação do <span className="text-obs-light">conhecimento</span>
-              </h1>
-              
-              <p className="text-xl text-obs-dark/70 leading-relaxed mb-12 max-w-2xl font-serif">
-                O <span className="font-bold">Observatório Edições</span> é um portal editorial voltado à divulgação científica, organização de coletâneas, publicação de chamadas abertas e fortalecimento da produção acadêmica em diálogo com educação, comunicação, inovação e sociedade.
-              </p>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              <div className="lg:col-span-7">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-obs-dark leading-tight mb-6 tracking-tight">
+                  Publicações acadêmicas em acesso aberto para ampliar a circulação do <span className="text-obs-light">conhecimento</span>
+                </h1>
+                
+                <p className="text-lg md:text-xl text-obs-dark/70 leading-relaxed mb-10 max-w-2xl font-serif">
+                  O <span className="font-bold text-obs-dark">Observatório Edições</span> é um portal editorial voltado à divulgação científica, organização de coletâneas e fortalecimento da produção acadêmica em diálogo com a sociedade.
+                </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/publicacoes" className="bg-obs-dark hover:bg-obs-light text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-obs-dark/20 hover:shadow-obs-light/30">
-                  <BookOpen size={20} />
-                  Ver publicações
-                </Link>
-                <Link to="/submissoes" className="bg-white hover:bg-obs-bg text-obs-dark border border-obs-dark/10 px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
-                  <Send size={20} className="text-obs-teal" />
-                  Submeter trabalho
-                </Link>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link to="/publicacoes" className="bg-obs-dark hover:bg-obs-light text-white px-8 py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-obs-dark/10 hover:shadow-obs-light/20">
+                    <BookOpen size={18} />
+                    Ver publicações
+                  </Link>
+                  <Link to="/submissoes" className="bg-white hover:bg-obs-bg text-obs-dark border border-obs-dark/10 px-8 py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
+                    <Send size={18} className="text-obs-teal" />
+                    Submeter trabalho
+                  </Link>
+                </div>
+              </div>
+              
+              <div className="hidden lg:block lg:col-span-5 relative">
+                <div className="relative z-10 bg-white p-4 rounded-3xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border border-obs-bg">
+                  <img 
+                    src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80&w=800" 
+                    alt="Livros e conhecimento" 
+                    className="rounded-2xl w-full h-auto object-cover aspect-[4/5]"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute -bottom-6 -right-6 bg-obs-gold text-obs-dark p-4 rounded-2xl shadow-xl font-bold text-sm">
+                    Acesso Aberto
+                  </div>
+                </div>
+                {/* Decorative circles */}
+                <div className="absolute -top-10 -left-10 w-32 h-32 bg-obs-light/20 rounded-full blur-2xl"></div>
+                <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-obs-teal/10 rounded-full blur-3xl"></div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Sobre Section */}
-        <section id="sobre" className="py-24 bg-white">
+        <section id="sobre" className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-obs-dark mb-6">Sobre o Observatório</h2>
-                <div className="w-20 h-1 bg-obs-gold mb-8 rounded-full"></div>
+                <h2 className="text-2xl md:text-3xl font-bold text-obs-dark mb-4">Sobre o Observatório</h2>
+                <div className="w-16 h-1 bg-obs-gold mb-6 rounded-full"></div>
                 
-                <div className="space-y-6 text-obs-dark/80 font-serif leading-relaxed text-lg">
+                <div className="space-y-4 text-obs-dark/80 font-serif leading-relaxed text-base">
                   <p>
-                    O Observatório Edições nasce do compromisso inegociável com a democratização do saber. Somos uma iniciativa editorial acadêmica dedicada a publicar e dar visibilidade a pesquisas de excelência nas áreas de Educação, Comunicação, Inovação e suas intersecções com os desafios da sociedade contemporânea.
+                    O Observatório Edições nasce do compromisso com a democratização do saber. Somos uma iniciativa editorial acadêmica dedicada a publicar e dar visibilidade a pesquisas de excelência nas áreas de Educação, Comunicação, Inovação e suas intersecções com os desafios da sociedade contemporânea.
                   </p>
                   <p>
-                    Nossa missão é atuar como uma ponte entre a universidade e a sociedade, garantindo que o conhecimento científico circule livremente, sem barreiras financeiras. Por isso, adotamos integralmente a política de <strong className="text-obs-dark">Acesso Aberto (Open Access)</strong> em todas as nossas publicações.
+                    Nossa missão é atuar como uma ponte entre a universidade e a sociedade, garantindo que o conhecimento científico circule livremente. Adotamos integralmente a política de <strong className="text-obs-dark">Acesso Aberto (Open Access)</strong> em todas as nossas publicações.
                   </p>
                   <p>
-                    Com um conselho editorial rigoroso e um processo de avaliação por pares, buscamos não apenas publicar livros e coletâneas, mas fomentar debates qualificados sobre desinformação, novas tecnologias educacionais e políticas públicas.
+                    Com um conselho editorial rigoroso, buscamos não apenas publicar livros e coletâneas, mas fomentar debates qualificados sobre desinformação, novas tecnologias educacionais e políticas públicas.
                   </p>
                 </div>
               </div>
               <div className="relative">
-                <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl">
+                <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
                   <img 
                     src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=1000" 
                     alt="Biblioteca acadêmica" 
@@ -167,9 +185,9 @@ export function Home() {
                     referrerPolicy="no-referrer"
                   />
                 </div>
-                <div className="absolute -bottom-8 -left-8 bg-obs-dark text-white p-8 rounded-2xl shadow-xl max-w-xs">
-                  <p className="font-cursive text-2xl mb-2 italic">"O conhecimento só cumpre seu papel quando compartilhado."</p>
-                  <div className="w-12 h-0.5 bg-obs-gold mt-4"></div>
+                <div className="absolute -bottom-6 -left-6 bg-obs-dark text-white p-6 rounded-xl shadow-xl max-w-[240px]">
+                  <p className="font-cursive text-xl mb-1 italic">"O conhecimento só cumpre seu papel quando compartilhado."</p>
+                  <div className="w-10 h-0.5 bg-obs-gold mt-3"></div>
                 </div>
               </div>
             </div>
@@ -217,20 +235,26 @@ export function Home() {
                 <h2 className="text-3xl md:text-4xl font-bold text-obs-dark mb-4">Últimas Publicações</h2>
                 <div className="w-20 h-1 bg-obs-light rounded-full"></div>
               </div>
-              <Link to="/publicacoes" className="inline-flex items-center gap-2 text-obs-teal font-semibold hover:text-obs-dark transition-colors">
-                Ver catálogo completo
-                <ArrowRight size={20} />
-              </Link>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {books
                 .filter(book => book.status === 'Publicado')
                 .sort((a, b) => (b.year || 0) - (a.year || 0))
-                .slice(0, 6)
+                .slice(0, 8)
                 .map((book) => (
                 <BookCard key={book.id} book={book} />
               ))}
+            </div>
+
+            <div className="mt-16 flex justify-center">
+              <Link 
+                to="/publicacoes" 
+                className="bg-obs-gold hover:bg-obs-dark hover:text-white text-obs-dark px-10 py-4 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-obs-gold/20 hover:shadow-obs-dark/20 group"
+              >
+                <BookOpen size={22} className="group-hover:scale-110 transition-transform" />
+                Ver catálogo completo
+              </Link>
             </div>
             
             {books.filter(book => book.status === 'Publicado').length === 0 && (
