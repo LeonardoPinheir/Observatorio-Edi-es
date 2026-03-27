@@ -9,7 +9,7 @@ export function Publications() {
   const [books, setBooks] = useState<Book[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCollection, setSelectedCollection] = useState('');
   const [selectedAuthor, setSelectedAuthor] = useState('');
 
   useEffect(() => {
@@ -36,9 +36,9 @@ export function Publications() {
     return uniqueYears.sort((a, b) => (b as number) - (a as number));
   }, [books]);
 
-  const categories = useMemo(() => {
-    const uniqueCategories = Array.from(new Set(books.map(b => b.category).filter(Boolean)));
-    return uniqueCategories.sort();
+  const collections = useMemo(() => {
+    const uniqueCollections = Array.from(new Set(books.map(b => b.collection).filter(Boolean)));
+    return uniqueCollections.sort();
   }, [books]);
 
   const authors = useMemo(() => {
@@ -58,12 +58,12 @@ export function Publications() {
         (book.abstract && book.abstract.toLowerCase().includes(searchTerm.toLowerCase()));
       
       const matchesYear = selectedYear === '' || book.year?.toString() === selectedYear;
-      const matchesCategory = selectedCategory === '' || book.category === selectedCategory;
+      const matchesCollection = selectedCollection === '' || book.collection === selectedCollection;
       const matchesAuthor = selectedAuthor === '' || (book.authors && book.authors.includes(selectedAuthor));
 
-      return matchesSearch && matchesYear && matchesCategory && matchesAuthor;
+      return matchesSearch && matchesYear && matchesCollection && matchesAuthor;
     }).sort((a, b) => (b.year || 0) - (a.year || 0));
-  }, [books, searchTerm, selectedYear, selectedCategory, selectedAuthor]);
+  }, [books, searchTerm, selectedYear, selectedCollection, selectedAuthor]);
 
   return (
     <div className="min-h-screen flex flex-col bg-obs-bg">
@@ -72,12 +72,21 @@ export function Publications() {
       <main className="flex-grow pt-24 pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-obs-dark mb-4">Publicações</h1>
-            <div className="w-20 h-1 bg-obs-light rounded-full mb-6"></div>
-            <p className="text-lg text-obs-dark/70 font-serif max-w-3xl">
-              Explore nosso catálogo completo de livros, coletâneas e cadernos temáticos. Utilize os filtros abaixo para encontrar publicações específicas.
-            </p>
+          <div className="mb-12 flex flex-col md:flex-row md:items-center gap-6">
+            <img 
+              src="/logo_observatorio.png" 
+              alt="Observatório Edições" 
+              className="h-20 w-auto object-contain"
+              referrerPolicy="no-referrer"
+            />
+            <div className="w-px h-16 bg-obs-dark/10 hidden md:block"></div>
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-obs-dark mb-4">Publicações</h1>
+              <div className="w-20 h-1 bg-obs-light rounded-full mb-6"></div>
+              <p className="text-lg text-obs-dark/70 font-serif max-w-3xl">
+                Explore nosso catálogo completo de livros, coletâneas e cadernos temáticos. Utilize os filtros abaixo para encontrar publicações específicas.
+              </p>
+            </div>
           </div>
 
           {/* Filters Section */}
@@ -114,15 +123,15 @@ export function Publications() {
                 ))}
               </select>
 
-              {/* Category Filter */}
+              {/* Collection Filter */}
               <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                value={selectedCollection}
+                onChange={(e) => setSelectedCollection(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl border border-obs-dark/10 focus:outline-none focus:ring-2 focus:ring-obs-light/50 bg-obs-bg/50 text-sm text-obs-dark"
               >
-                <option value="">Todos os Temas</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                <option value="">Todas as Coleções</option>
+                {collections.map(collection => (
+                  <option key={collection} value={collection}>{collection}</option>
                 ))}
               </select>
 
@@ -166,7 +175,7 @@ export function Publications() {
                 onClick={() => {
                   setSearchTerm('');
                   setSelectedYear('');
-                  setSelectedCategory('');
+                  setSelectedCollection('');
                   setSelectedAuthor('');
                 }}
                 className="mt-6 text-obs-teal font-medium hover:text-obs-dark transition-colors"

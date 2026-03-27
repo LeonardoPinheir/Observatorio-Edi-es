@@ -7,6 +7,13 @@ export const BookCard: React.FC<{ book: Book }> = ({ book }) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-obs-bg overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col h-full group">
       <Link to={`/book/${book.id}`} className="relative aspect-[210/297] overflow-hidden bg-obs-bg block">
+        {book.type && (
+          <div className="absolute top-3 left-3 z-10">
+            <span className="bg-obs-dark/80 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+              {book.type}
+            </span>
+          </div>
+        )}
         {book.coverUrl ? (
           <img
             src={book.coverUrl}

@@ -176,6 +176,56 @@ export function Home() {
           </div>
         </section>
 
+        {/* Featured Books Section */}
+        {books.filter(b => b.isFeatured).length > 0 && (
+          <section className="py-16 bg-white border-b border-obs-dark/5">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center gap-4 mb-10">
+                <div className="bg-obs-gold/10 p-2 rounded-lg text-obs-gold">
+                  <CheckCircle2 size={24} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-obs-dark tracking-tight">Destaques da Edição</h2>
+                  <p className="text-sm text-obs-dark/50 font-serif">Obras selecionadas pelo nosso conselho editorial</p>
+                </div>
+                <div className="flex-grow h-px bg-obs-dark/5 ml-4 hidden md:block"></div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                {books
+                  .filter(book => book.isFeatured)
+                  .slice(0, 2)
+                  .map((book) => (
+                    <div key={book.id} className="group relative bg-obs-bg/30 rounded-3xl p-6 hover:bg-obs-bg transition-all duration-500 border border-transparent hover:border-obs-dark/5">
+                      <div className="flex flex-col sm:flex-row gap-8 items-center sm:items-start">
+                        <div className="w-48 flex-shrink-0 shadow-2xl group-hover:scale-105 transition-transform duration-500">
+                          <BookCard book={book} />
+                        </div>
+                        <div className="flex flex-col justify-center py-2">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-obs-teal mb-3 bg-obs-teal/5 px-3 py-1 rounded-full w-fit">
+                            {book.type}
+                          </span>
+                          <h3 className="text-xl font-bold text-obs-dark mb-3 line-clamp-2 group-hover:text-obs-light transition-colors">
+                            {book.title}
+                          </h3>
+                          <p className="text-sm text-obs-dark/60 font-serif line-clamp-4 leading-relaxed mb-6">
+                            {book.abstract}
+                          </p>
+                          <Link 
+                            to={`/livro/${book.id}`}
+                            className="text-obs-dark font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all"
+                          >
+                            Conhecer obra <ArrowRight size={16} className="text-obs-gold" />
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Publicações Section */}
         <section id="publicacoes" className="py-24 bg-obs-bg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

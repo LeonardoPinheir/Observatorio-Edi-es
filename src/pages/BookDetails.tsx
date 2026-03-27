@@ -51,6 +51,13 @@ export function BookDetails() {
             {/* Left Column - Cover & Actions */}
             <div className="lg:col-span-4 bg-obs-dark/5 p-8 flex flex-col items-center border-b lg:border-b-0 lg:border-r border-obs-dark/5">
               <div className="w-full max-w-xs aspect-[210/297] bg-white rounded-xl shadow-md overflow-hidden mb-8 relative">
+                {book.type && (
+                  <div className="absolute top-3 left-3 z-10">
+                    <span className="bg-obs-dark/80 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                      {book.type}
+                    </span>
+                  </div>
+                )}
                 {book.coverUrl ? (
                   <img
                     src={book.coverUrl}
