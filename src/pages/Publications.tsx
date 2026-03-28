@@ -2,11 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { BookCard } from '../components/BookCard';
+import { BookLoader } from '../components/BookLoader';
 import { getBooks, Book } from '../lib/store';
 import { Search, Filter, BookOpen } from 'lucide-react';
 
 export function Publications() {
   const [books, setBooks] = useState<Book[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedCollection, setSelectedCollection] = useState('');
@@ -14,8 +16,10 @@ export function Publications() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       const booksData = await getBooks();
       setBooks(booksData.filter(b => b.status === 'Publicado'));
+      setIsLoading(false);
     };
     fetchData();
 
@@ -156,7 +160,9 @@ export function Publications() {
             </p>
           </div>
 
-          {filteredBooks.length > 0 ? (
+          {isLoading ? (
+            <BookLoader />
+          ) : filteredBooks.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {filteredBooks.map((book) => (
                 <BookCard key={book.id} book={book} />

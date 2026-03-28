@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Book, getBookById } from '../lib/store';
+import { BookLoader } from '../components/BookLoader';
 import { ArrowLeft, Download, BookOpen, Calendar, Hash } from 'lucide-react';
 
 export function BookDetails() {
@@ -27,10 +28,7 @@ export function BookDetails() {
   if (!book) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-obs-bg">
-        <div className="animate-pulse flex flex-col items-center">
-          <BookOpen size={48} className="text-obs-dark/20 mb-4" />
-          <p className="text-obs-dark/50 font-medium">Carregando...</p>
-        </div>
+        <BookLoader message="Carregando detalhes do livro..." />
       </div>
     );
   }

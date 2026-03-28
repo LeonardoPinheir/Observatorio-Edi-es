@@ -4,6 +4,8 @@ import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { BookCard } from '../components/BookCard';
 import { CallCard } from '../components/CallCard';
+import { BookLoader } from '../components/BookLoader';
+import { CallLoader } from '../components/CallLoader';
 import { getBooks, Book, addMessage, getCalls, getTeam, Call, TeamMember, getSubmissionTemplate } from '../lib/store';
 import { ArrowRight, BookOpen, FileText, Send, Users, Mail, MapPin, ExternalLink, Download, CheckCircle2 } from 'lucide-react';
 
@@ -12,6 +14,7 @@ export function Home() {
   const [calls, setCalls] = useState<Call[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [template, setTemplate] = useState<{ fileUrl: string, fileName: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [formData, setFormData] = useState({
     name: '',
@@ -49,6 +52,7 @@ export function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       const [booksData, callsData, teamData, templateData] = await Promise.all([
         getBooks(),
         getCalls(),
@@ -59,6 +63,7 @@ export function Home() {
       setCalls(callsData);
       setTeam(teamData);
       setTemplate(templateData);
+      setIsLoading(false);
     };
 
     fetchData();
@@ -200,19 +205,22 @@ export function Home() {
             <div className="absolute top-0 right-0 w-1/3 h-full bg-obs-light/5 -skew-x-12 translate-x-1/2"></div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-                <div>
-                  <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Destaques</h2>
-                  <div className="w-20 h-1.5 bg-obs-light rounded-full mb-6"></div>
-                </div>
-                <Link 
-                  to="/publicacoes" 
-                  className="group flex items-center gap-2 text-obs-light font-medium hover:text-white transition-colors"
-                >
-                  Ver todo o catálogo
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
+              <div>
+                <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Destaques</h2>
+                <div className="w-20 h-1.5 bg-obs-light rounded-full mb-6"></div>
               </div>
+              <Link 
+                to="/publicacoes" 
+                className="group flex items-center gap-2 text-obs-light font-medium hover:text-white transition-colors"
+              >
+                Ver todo o catálogo
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
 
+            {isLoading ? (
+              <BookLoader light />
+            ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {books
                   .filter(book => book.isFeatured)
@@ -223,6 +231,7 @@ export function Home() {
                     </div>
                   ))}
               </div>
+            )}
             </div>
           </section>
         )}
@@ -237,30 +246,36 @@ export function Home() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {books
-                .filter(book => book.status === 'Publicado')
-                .sort((a, b) => (b.year || 0) - (a.year || 0))
-                .slice(0, 8)
-                .map((book) => (
-                <BookCard key={book.id} book={book} />
-              ))}
-            </div>
+            {isLoading ? (
+              <BookLoader />
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                  {books
+                    .filter(book => book.status === 'Publicado')
+                    .sort((a, b) => (b.year || 0) - (a.year || 0))
+                    .slice(0, 8)
+                    .map((book) => (
+                    <BookCard key={book.id} book={book} />
+                  ))}
+                </div>
 
-            <div className="mt-16 flex justify-center">
-              <Link 
-                to="/publicacoes" 
-                className="bg-obs-gold hover:bg-obs-dark hover:text-white text-obs-dark px-10 py-4 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-obs-gold/20 hover:shadow-obs-dark/20 group"
-              >
-                <BookOpen size={22} className="group-hover:scale-110 transition-transform" />
-                Ver catálogo completo
-              </Link>
-            </div>
-            
-            {books.filter(book => book.status === 'Publicado').length === 0 && (
-              <div className="text-center py-12 text-obs-dark/50 font-serif">
-                Nenhuma publicação disponível no momento.
-              </div>
+                <div className="mt-16 flex justify-center">
+                  <Link 
+                    to="/publicacoes" 
+                    className="bg-obs-gold hover:bg-obs-dark hover:text-white text-obs-dark px-10 py-4 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-obs-gold/20 hover:shadow-obs-dark/20 group"
+                  >
+                    <BookOpen size={22} className="group-hover:scale-110 transition-transform" />
+                    Ver catálogo completo
+                  </Link>
+                </div>
+                
+                {books.filter(book => book.status === 'Publicado').length === 0 && (
+                  <div className="text-center py-12 text-obs-dark/50 font-serif">
+                    Nenhuma publicação disponível no momento.
+                  </div>
+                )}
+              </>
             )}
           </div>
         </section>
@@ -277,7 +292,11 @@ export function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-              {calls.length > 0 ? (
+              {isLoading ? (
+                <div className="col-span-full">
+                  <CallLoader message="Carregando chamadas abertas..." />
+                </div>
+              ) : calls.length > 0 ? (
                 calls.map((call) => (
                   <CallCard key={call.id} call={call} />
                 ))

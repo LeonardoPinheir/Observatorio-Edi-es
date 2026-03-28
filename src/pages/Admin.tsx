@@ -10,8 +10,10 @@ import {
 import { 
   BookOpen, LogOut, Plus, Edit2, Trash2, Search, X, Check, Eye, Filter, 
   AlertTriangle, Upload, Mail, MessageSquare, Calendar, User, ChevronRight, 
-  CheckCircle2, Reply, Users, Clock, Link as LinkIcon, Download, FileText
+  CheckCircle2, Reply, Users, Clock, Link as LinkIcon, Download, FileText, Megaphone
 } from 'lucide-react';
+import { BookLoader } from '../components/BookLoader';
+import { CallLoader } from '../components/CallLoader';
 
 export function Admin() {
   const navigate = useNavigate();
@@ -65,6 +67,7 @@ export function Admin() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       const isAuth = await isAuthenticated();
       if (!isAuth) {
         navigate('/login');
@@ -87,6 +90,7 @@ export function Admin() {
         setTeam(teamData);
         setUnreadCount(unread);
       }
+      setIsLoading(false);
     };
 
     fetchData();
@@ -614,7 +618,17 @@ export function Admin() {
       </header>
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8 overflow-x-auto pt-3 pb-2 px-2">
+        {isLoading && books.length === 0 ? (
+          <div className="flex-grow flex items-center justify-center">
+            {activeTab === 'calls' ? (
+              <CallLoader message="Carregando painel administrativo..." />
+            ) : (
+              <BookLoader message="Carregando painel administrativo..." />
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8 overflow-x-auto pt-3 pb-2 px-2">
           <button 
             onClick={() => setActiveTab('books')}
             className={`flex items-center gap-3 px-6 py-3 rounded-2xl transition-all whitespace-nowrap ${
@@ -1513,7 +1527,9 @@ export function Admin() {
             </div>
           </>
         )}
-      </main>
+      </>
+    )}
+  </main>
 
       {/* Delete Confirmation Modal */}
       {(bookToDelete || messageToDelete || callToDelete || teamToDelete) && (
