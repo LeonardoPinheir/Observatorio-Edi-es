@@ -9,7 +9,7 @@ export function Navbar() {
   const isHome = location.pathname === '/';
 
   const navLinks = [
-    { name: 'Sobre', href: isHome ? '#sobre' : '/#sobre' },
+    { name: 'Home', href: '/' },
     { name: 'Publicações', href: '/publicacoes' },
     { name: 'Chamadas', href: isHome ? '#chamadas' : '/#chamadas' },
     { name: 'Submissões', href: '/submissoes' },

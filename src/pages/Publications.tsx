@@ -73,26 +73,9 @@ export function Publications() {
     <div className="min-h-screen flex flex-col bg-obs-bg">
       <Navbar />
 
-      <main className="flex-grow pt-24 pb-24">
+      <main className="flex-grow pt-6 pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="mb-12 flex flex-col md:flex-row md:items-center gap-6">
-            <img 
-              src="/logo_observatorio.png" 
-              alt="Observatório Edições" 
-              className="h-20 w-auto object-contain"
-              referrerPolicy="no-referrer"
-            />
-            <div className="w-px h-16 bg-obs-dark/10 hidden md:block"></div>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-bold text-obs-dark mb-4">Publicações</h1>
-              <div className="w-20 h-1 bg-obs-light rounded-full mb-6"></div>
-              <p className="text-lg text-obs-dark/70 font-serif max-w-3xl">
-                Explore nosso catálogo completo de livros, coletâneas e cadernos temáticos. Utilize os filtros abaixo para encontrar publicações específicas.
-              </p>
-            </div>
-          </div>
-
           {/* Filters Section */}
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-obs-dark/5 mb-12">
             <div className="flex items-center gap-2 mb-6 text-obs-dark font-semibold">
@@ -154,10 +137,7 @@ export function Publications() {
           </div>
 
           {/* Results Section */}
-          <div className="mb-6 flex justify-between items-center">
-            <p className="text-sm font-medium text-obs-dark/60">
-              Mostrando <span className="text-obs-dark font-bold">{filteredBooks.length}</span> {filteredBooks.length === 1 ? 'publicação' : 'publicações'}
-            </p>
+          <div className="mb-6">
           </div>
 
           {isLoading ? (

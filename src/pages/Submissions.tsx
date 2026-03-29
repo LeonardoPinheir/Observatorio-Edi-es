@@ -73,15 +73,12 @@ export function Submissions() {
     <div className="min-h-screen bg-obs-bg flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-32 pb-20">
+      <main className="flex-grow pt-6 pb-20 relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-obs-light/5 to-transparent -z-10"></div>
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-obs-gold/5 rounded-full blur-3xl -z-10"></div>
+        
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-obs-dark mb-4">Submissões</h1>
-            <p className="text-lg text-obs-dark/70 font-serif max-w-2xl mx-auto">
-              Contribua com o Observatório Edições enviando seus textos, artigos e pesquisas originais.
-            </p>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <div className="md:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-obs-dark/5">
               <h2 className="text-2xl font-bold text-obs-dark mb-6 flex items-center gap-3">

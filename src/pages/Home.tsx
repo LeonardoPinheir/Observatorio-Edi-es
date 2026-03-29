@@ -6,6 +6,7 @@ import { BookCard } from '../components/BookCard';
 import { CallCard } from '../components/CallCard';
 import { BookLoader } from '../components/BookLoader';
 import { CallLoader } from '../components/CallLoader';
+import { TeamLoader } from '../components/TeamLoader';
 import { getBooks, Book, addMessage, getCalls, getTeam, Call, TeamMember, getSubmissionTemplate } from '../lib/store';
 import { ArrowRight, BookOpen, FileText, Send, Users, Mail, MapPin, ExternalLink, Download, CheckCircle2 } from 'lucide-react';
 
@@ -156,44 +157,6 @@ export function Home() {
                 {/* Decorative circles */}
                 <div className="absolute -top-10 -left-10 w-32 h-32 bg-obs-light/20 rounded-full blur-2xl"></div>
                 <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-obs-teal/10 rounded-full blur-3xl"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Sobre Section */}
-        <section id="sobre" className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-obs-dark mb-4">Sobre o Observatório</h2>
-                <div className="w-16 h-1 bg-obs-gold mb-6 rounded-full"></div>
-                
-                <div className="space-y-4 text-obs-dark/80 font-serif leading-relaxed text-base">
-                  <p>
-                    O Observatório Edições nasce do compromisso com a democratização do saber. Somos uma iniciativa editorial acadêmica dedicada a publicar e dar visibilidade a pesquisas de excelência nas áreas de Educação, Comunicação, Inovação e suas intersecções com os desafios da sociedade contemporânea.
-                  </p>
-                  <p>
-                    Nossa missão é atuar como uma ponte entre a universidade e a sociedade, garantindo que o conhecimento científico circule livremente. Adotamos integralmente a política de <strong className="text-obs-dark">Acesso Aberto (Open Access)</strong> em todas as nossas publicações.
-                  </p>
-                  <p>
-                    Com um conselho editorial rigoroso, buscamos não apenas publicar livros e coletâneas, mas fomentar debates qualificados sobre desinformação, novas tecnologias educacionais e políticas públicas.
-                  </p>
-                </div>
-              </div>
-              <div className="relative">
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
-                  <img 
-                    src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=1000" 
-                    alt="Biblioteca acadêmica" 
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-                <div className="absolute -bottom-6 -left-6 bg-obs-dark text-white p-6 rounded-xl shadow-xl max-w-[240px]">
-                  <p className="font-cursive text-xl mb-1 italic">"O conhecimento só cumpre seu papel quando compartilhado."</p>
-                  <div className="w-10 h-0.5 bg-obs-gold mt-3"></div>
-                </div>
               </div>
             </div>
           </div>
@@ -412,16 +375,26 @@ export function Home() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {team.map((member, index) => (
-                <div key={index} className="bg-white p-6 rounded-2xl border border-obs-dark/5 text-center hover:shadow-lg transition-shadow duration-300">
-                  <div className="w-20 h-20 mx-auto bg-obs-bg rounded-full flex items-center justify-center mb-4 text-obs-dark/30">
-                    <Users size={32} />
-                  </div>
-                  <h3 className="text-lg font-bold text-obs-dark mb-1">{member.name}</h3>
-                  <p className="text-sm font-semibold text-obs-teal mb-3">{member.role}</p>
-                  <p className="text-xs text-obs-dark/60">{member.institution}</p>
+              {isLoading ? (
+                <div className="col-span-full">
+                  <TeamLoader />
                 </div>
-              ))}
+              ) : team.length > 0 ? (
+                team.map((member, index) => (
+                  <div key={index} className="bg-white p-6 rounded-2xl border border-obs-dark/5 text-center hover:shadow-lg transition-shadow duration-300">
+                    <div className="w-20 h-20 mx-auto bg-obs-bg rounded-full flex items-center justify-center mb-4 text-obs-dark/30">
+                      <Users size={32} />
+                    </div>
+                    <h3 className="text-lg font-bold text-obs-dark mb-1">{member.name}</h3>
+                    <p className="text-sm font-semibold text-obs-teal mb-3">{member.role}</p>
+                    <p className="text-xs text-obs-dark/60">{member.institution}</p>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12 text-obs-dark/50 font-serif">
+                  Informações da equipe indisponíveis no momento.
+                </div>
+              )}
             </div>
           </div>
         </section>
