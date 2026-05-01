@@ -34,7 +34,7 @@ export function BookDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-obs-bg pt-24 pb-16">
+    <div className="min-h-screen bg-obs-bg pt-12 pb-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link 
           to="/" 
@@ -47,7 +47,7 @@ export function BookDetails() {
         <div className="bg-white rounded-3xl shadow-sm border border-obs-dark/5 overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
             {/* Left Column - Cover & Actions */}
-            <div className="lg:col-span-4 bg-obs-dark/5 p-8 flex flex-col items-center border-b lg:border-b-0 lg:border-r border-obs-dark/5">
+            <div className="lg:col-span-4 bg-obs-dark/5 p-6 lg:p-8 flex flex-col items-center border-b lg:border-b-0 lg:border-r border-obs-dark/5">
               <div className="w-full max-w-xs aspect-[210/297] bg-white rounded-xl shadow-md overflow-hidden mb-8 relative">
                 {book.type && (
                   <div className="absolute top-3 left-3 z-10">
@@ -87,9 +87,9 @@ export function BookDetails() {
             </div>
 
             {/* Right Column - Details */}
-            <div className="lg:col-span-8 p-8 lg:p-12">
+            <div className="lg:col-span-8 p-6 lg:p-12">
               <div className="mb-8">
-                <h1 className="text-3xl sm:text-4xl font-bold text-obs-dark mb-3 leading-tight">
+                <h1 className="text-2xl sm:text-4xl font-bold text-obs-dark mb-3 leading-tight">
                   {book.title}
                 </h1>
                 {book.subtitle && (

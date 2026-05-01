@@ -178,7 +178,7 @@ export function Home() {
 
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="relative pt-20 pb-24 overflow-hidden bg-obs-bg">
+        <section className="relative pt-12 pb-16 md:pt-20 md:pb-24 overflow-hidden bg-obs-bg">
           <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
             <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-obs-light blur-3xl mix-blend-multiply"></div>
             <div className="absolute top-48 -left-24 w-72 h-72 rounded-full bg-obs-teal blur-3xl mix-blend-multiply"></div>
@@ -186,9 +186,9 @@ export function Home() {
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               <div className="lg:col-span-7">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-obs-dark leading-tight mb-6 tracking-tight">
+                <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-obs-dark leading-tight mb-6 tracking-tight">
                   Publicações acadêmicas em acesso aberto para ampliar a circulação do <span className="text-obs-light">conhecimento</span>
                 </h1>
                 
@@ -230,7 +230,7 @@ export function Home() {
 
         {/* Featured Books Section */}
         {featuredBooks.length > 0 && (
-          <section className="py-20 bg-obs-dark text-white overflow-hidden relative">
+          <section className="py-16 md:py-20 bg-obs-dark text-white overflow-hidden relative">
             <div className="absolute top-0 right-0 w-1/3 h-full bg-obs-light/5 -skew-x-12 translate-x-1/2"></div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
@@ -295,9 +295,9 @@ export function Home() {
         )}
 
         {/* Publicações Section */}
-        <section id="publicacoes" className="py-24 bg-obs-bg">
+        <section id="publicacoes" className="py-16 md:py-24 bg-obs-bg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-16 gap-6">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-obs-dark mb-4">Últimas Publicações</h2>
                 <div className="w-20 h-1 bg-obs-light rounded-full"></div>
@@ -308,7 +308,7 @@ export function Home() {
               <BookLoader />
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
                   {books
                     .filter(book => book.status === 'Publicado')
                     .sort((a, b) => (b.year || 0) - (a.year || 0))
@@ -339,9 +339,9 @@ export function Home() {
         </section>
 
         {/* Chamadas Abertas Section */}
-        <section id="chamadas" className="py-24 bg-white">
+        <section id="chamadas" className="py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-obs-dark mb-6">Chamadas Abertas</h2>
               <div className="w-20 h-1 bg-obs-gold mx-auto mb-8 rounded-full"></div>
               <p className="text-lg text-obs-dark/70 font-serif">
@@ -349,7 +349,7 @@ export function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
               {isLoading ? (
                 <div className="col-span-full">
                   <CallLoader message="Carregando chamadas abertas..." />
@@ -368,9 +368,9 @@ export function Home() {
         </section>
 
         {/* Submissões Section */}
-        <section id="submissoes" className="py-24 bg-obs-dark text-white">
+        <section id="submissoes" className="py-16 md:py-24 bg-obs-dark text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-6">Diretrizes para Submissão</h2>
                 <div className="w-20 h-1 bg-obs-teal mb-8 rounded-full"></div>
@@ -429,7 +429,7 @@ export function Home() {
                 </div>
               </div>
               
-              <div className="bg-white/5 border border-white/10 p-8 md:p-12 rounded-3xl backdrop-blur-sm">
+              <div className="bg-white/5 border border-white/10 p-6 md:p-12 rounded-3xl backdrop-blur-sm">
                 <h3 className="text-2xl font-bold mb-6 text-obs-light">Áreas de Interesse</h3>
                 <ul className="space-y-4 text-white/80 font-serif">
                   <li className="flex items-center gap-3">
@@ -459,9 +459,9 @@ export function Home() {
         </section>
 
         {/* Equipe Editorial Section */}
-        <section id="equipe" className="py-24 bg-obs-bg">
+        <section id="equipe" className="py-16 md:py-24 bg-obs-bg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-obs-dark mb-6">Equipe Editorial</h2>
               <div className="w-20 h-1 bg-obs-light mx-auto mb-8 rounded-full"></div>
               <p className="text-lg text-obs-dark/70 font-serif">
@@ -495,9 +495,9 @@ export function Home() {
         </section>
 
         {/* Contato Section */}
-        <section id="contato" className="py-24 bg-white">
+        <section id="contato" className="py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-obs-dark mb-6">Fale Conosco</h2>
                 <div className="w-20 h-1 bg-obs-gold mb-8 rounded-full"></div>
@@ -536,7 +536,7 @@ export function Home() {
                 </div>
               </div>
 
-              <div className="bg-obs-bg p-8 md:p-10 rounded-3xl border border-obs-dark/5">
+              <div className="bg-obs-bg p-6 md:p-10 rounded-3xl border border-obs-dark/5">
                 {formStatus === 'success' ? (
                   <div className="h-full flex flex-col items-center justify-center text-center py-12">
                     <div className="bg-obs-teal/10 p-6 rounded-full text-obs-teal mb-6">
