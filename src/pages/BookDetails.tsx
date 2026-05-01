@@ -88,12 +88,12 @@ export function BookDetails() {
 
             {/* Right Column - Details */}
             <div className="lg:col-span-8 p-6 lg:p-12">
-              <div className="mb-8">
-                <h1 className="text-2xl sm:text-4xl font-bold text-obs-dark mb-3 leading-tight">
+              <div className="mb-6 lg:mb-8">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-obs-dark mb-2 sm:mb-3 leading-tight">
                   {book.title}
                 </h1>
                 {book.subtitle && (
-                  <h2 className="text-xl sm:text-2xl font-medium text-obs-dark/70 leading-snug">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-medium text-obs-dark/70 leading-snug">
                     {book.subtitle}
                   </h2>
                 )}

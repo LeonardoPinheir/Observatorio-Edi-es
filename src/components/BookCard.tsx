@@ -27,6 +27,7 @@ export const BookCard: React.FC<BookCardProps> = ({ book, variant = 'default' })
             alt={`Capa do livro ${book.title}`}
             className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
             referrerPolicy="no-referrer"
+            loading="lazy"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-obs-light/30">

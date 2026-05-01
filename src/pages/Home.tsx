@@ -188,7 +188,7 @@ export function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               <div className="lg:col-span-7">
-                <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-obs-dark leading-tight mb-6 tracking-tight">
+                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-obs-dark leading-tight mb-4 md:mb-6 tracking-tight">
                   Publicações acadêmicas em acesso aberto para ampliar a circulação do <span className="text-obs-light">conhecimento</span>
                 </h1>
                 
@@ -215,6 +215,7 @@ export function Home() {
                     alt="Livros e conhecimento" 
                     className="rounded-2xl w-full h-auto object-cover aspect-[4/5]"
                     referrerPolicy="no-referrer"
+                    loading="lazy"
                   />
                   <div className="absolute -bottom-6 -right-6 bg-obs-gold text-obs-dark p-4 rounded-2xl shadow-xl font-bold text-sm">
                     Acesso Aberto
@@ -235,7 +236,7 @@ export function Home() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
                 <div>
-                  <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Destaques</h2>
+                  <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4 tracking-tight">Destaques</h2>
                   <div className="w-20 h-1.5 bg-obs-light rounded-full mb-6"></div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -295,11 +296,11 @@ export function Home() {
         )}
 
         {/* Publicações Section */}
-        <section id="publicacoes" className="py-16 md:py-24 bg-obs-bg">
+        <section id="publicacoes" className="py-12 md:py-20 bg-obs-bg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-16 gap-6">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-obs-dark mb-4">Últimas Publicações</h2>
+                <h2 className="text-2xl md:text-4xl font-bold text-obs-dark mb-4">Últimas Publicações</h2>
                 <div className="w-20 h-1 bg-obs-light rounded-full"></div>
               </div>
             </div>
@@ -339,10 +340,10 @@ export function Home() {
         </section>
 
         {/* Chamadas Abertas Section */}
-        <section id="chamadas" className="py-16 md:py-24 bg-white">
+        <section id="chamadas" className="py-12 md:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-obs-dark mb-6">Chamadas Abertas</h2>
+              <h2 className="text-2xl md:text-4xl font-bold text-obs-dark mb-6">Chamadas Abertas</h2>
               <div className="w-20 h-1 bg-obs-gold mx-auto mb-8 rounded-full"></div>
               <p className="text-lg text-obs-dark/70 font-serif">
                 Participe de nossas próximas publicações. Recebemos artigos, ensaios e capítulos de livros para compor nossas coletâneas temáticas.
@@ -368,11 +369,11 @@ export function Home() {
         </section>
 
         {/* Submissões Section */}
-        <section id="submissoes" className="py-16 md:py-24 bg-obs-dark text-white">
+        <section id="submissoes" className="py-12 md:py-20 bg-obs-dark text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">Diretrizes para Submissão</h2>
+                <h2 className="text-2xl md:text-4xl font-bold mb-6">Diretrizes para Submissão</h2>
                 <div className="w-20 h-1 bg-obs-teal mb-8 rounded-full"></div>
                 
                 <div className="space-y-8">
@@ -459,10 +460,10 @@ export function Home() {
         </section>
 
         {/* Equipe Editorial Section */}
-        <section id="equipe" className="py-16 md:py-24 bg-obs-bg">
+        <section id="equipe" className="py-12 md:py-20 bg-obs-bg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-obs-dark mb-6">Equipe Editorial</h2>
+              <h2 className="text-2xl md:text-4xl font-bold text-obs-dark mb-6">Equipe Editorial</h2>
               <div className="w-20 h-1 bg-obs-light mx-auto mb-8 rounded-full"></div>
               <p className="text-lg text-obs-dark/70 font-serif">
                 Conheça os profissionais e pesquisadores responsáveis por manter a excelência e o rigor acadêmico de nossas publicações.
@@ -495,11 +496,11 @@ export function Home() {
         </section>
 
         {/* Contato Section */}
-        <section id="contato" className="py-16 md:py-24 bg-white">
+        <section id="contato" className="py-12 md:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-obs-dark mb-6">Fale Conosco</h2>
+                <h2 className="text-2xl md:text-4xl font-bold text-obs-dark mb-6">Fale Conosco</h2>
                 <div className="w-20 h-1 bg-obs-gold mb-8 rounded-full"></div>
                 <p className="text-lg text-obs-dark/70 font-serif mb-12">
                   Dúvidas sobre submissões, propostas de parcerias ou informações sobre nossas publicações? Entre em contato com nossa equipe.
