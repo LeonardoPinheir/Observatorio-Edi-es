@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
@@ -8,11 +8,21 @@ import { BookLoader } from '../components/BookLoader';
 import { CallLoader } from '../components/CallLoader';
 import { TeamLoader } from '../components/TeamLoader';
 import { getBooks, Book, addMessage, getCalls, getTeam, Call, TeamMember, getSubmissionTemplate } from '../lib/store';
-import { ArrowRight, BookOpen, FileText, Send, Users, Mail, MapPin, ExternalLink, Download, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, BookOpen, FileText, Send, Users, Mail, MapPin, ExternalLink, Download, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export function Home() {
   const [books, setBooks] = useState<Book[]>([]);
+  const [featuredBooks, setFeaturedBooks] = useState<Book[]>([]);
   const [calls, setCalls] = useState<Call[]>([]);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const scrollCarousel = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const { clientWidth } = carouselRef.current;
+      const scrollAmount = direction === 'left' ? -clientWidth : clientWidth;
+      carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [template, setTemplate] = useState<{ fileUrl: string, fileName: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -61,6 +71,11 @@ export function Home() {
         getSubmissionTemplate()
       ]);
       setBooks(booksData);
+      
+      const published = booksData.filter(b => b.status === 'Publicado');
+      const shuffled = [...published].sort(() => 0.5 - Math.random());
+      setFeaturedBooks(shuffled);
+
       setCalls(callsData);
       setTeam(teamData);
       setTemplate(templateData);
@@ -89,6 +104,11 @@ export function Home() {
         getTeam()
       ]);
       setBooks(booksData);
+
+      const published = booksData.filter(b => b.status === 'Publicado');
+      const shuffled = [...published].sort(() => 0.5 - Math.random());
+      setFeaturedBooks(shuffled);
+
       setCalls(callsData);
       setTeam(teamData);
     };
@@ -105,6 +125,52 @@ export function Home() {
       window.removeEventListener('teamUpdated', handleUpdate);
     };
   }, []);
+
+  useEffect(() => {
+    let animationFrameId: number;
+    let isHovered = false;
+    let accum = 0;
+
+    const play = () => {
+      if (carouselRef.current && !isHovered && featuredBooks.length > 0) {
+        accum += 0.5; // adjust speed (0.5 px per frame is about 30px/sec)
+        if (accum >= 1) {
+          carouselRef.current.scrollLeft += Math.floor(accum);
+          accum -= Math.floor(accum);
+          
+          if (carouselRef.current.scrollLeft >= carouselRef.current.scrollWidth - carouselRef.current.clientWidth - 1) {
+            carouselRef.current.scrollLeft = 0;
+          }
+        }
+      }
+      animationFrameId = requestAnimationFrame(play);
+    };
+
+    if (featuredBooks.length > 0) {
+      animationFrameId = requestAnimationFrame(play);
+    }
+
+    const el = carouselRef.current;
+    const handleMouseEnter = () => { isHovered = true; };
+    const handleMouseLeave = () => { isHovered = false; };
+
+    if (el) {
+      el.addEventListener('mouseenter', handleMouseEnter);
+      el.addEventListener('mouseleave', handleMouseLeave);
+      el.addEventListener('touchstart', handleMouseEnter, { passive: true });
+      el.addEventListener('touchend', handleMouseLeave);
+    }
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      if (el) {
+        el.removeEventListener('mouseenter', handleMouseEnter);
+        el.removeEventListener('mouseleave', handleMouseLeave);
+        el.removeEventListener('touchstart', handleMouseEnter);
+        el.removeEventListener('touchend', handleMouseLeave);
+      }
+    };
+  }, [featuredBooks.length]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -163,15 +229,59 @@ export function Home() {
         </section>
 
         {/* Featured Books Section */}
-        {books.filter(b => b.isFeatured).length > 0 && (
+        {featuredBooks.length > 0 && (
           <section className="py-20 bg-obs-dark text-white overflow-hidden relative">
             <div className="absolute top-0 right-0 w-1/3 h-full bg-obs-light/5 -skew-x-12 translate-x-1/2"></div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-              <div>
-                <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Destaques</h2>
-                <div className="w-20 h-1.5 bg-obs-light rounded-full mb-6"></div>
+                <div>
+                  <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Destaques</h2>
+                  <div className="w-20 h-1.5 bg-obs-light rounded-full mb-6"></div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => scrollCarousel('left')}
+                      className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                      aria-label="Anterior"
+                    >
+                      <ChevronLeft size={24} />
+                    </button>
+                    <button 
+                      onClick={() => scrollCarousel('right')}
+                      className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                      aria-label="Próximo"
+                    >
+                      <ChevronRight size={24} />
+                    </button>
+                  </div>
+                  <Link 
+                    to="/publicacoes" 
+                    className="hidden md:flex group items-center gap-2 text-obs-light font-medium hover:text-white transition-colors"
+                  >
+                    Ver todo o catálogo
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
               </div>
+
+            {isLoading ? (
+              <BookLoader light />
+            ) : (
+              <div 
+                ref={carouselRef}
+                className="flex overflow-x-auto gap-8 pb-8"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {featuredBooks.map((book) => (
+                    <div key={book.id} className="min-w-[85vw] sm:min-w-[calc(50%-1rem)] lg:min-w-[calc(25%-1.5rem)] bg-white/5 p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300">
+                      <BookCard book={book} variant="featured" />
+                    </div>
+                  ))}
+              </div>
+            )}
+            
+            <div className="mt-8 md:hidden flex justify-center">
               <Link 
                 to="/publicacoes" 
                 className="group flex items-center gap-2 text-obs-light font-medium hover:text-white transition-colors"
@@ -180,21 +290,6 @@ export function Home() {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
-
-            {isLoading ? (
-              <BookLoader light />
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {books
-                  .filter(book => book.isFeatured)
-                  .slice(0, 4)
-                  .map((book) => (
-                    <div key={book.id} className="bg-white/5 p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300">
-                      <BookCard book={book} variant="featured" />
-                    </div>
-                  ))}
-              </div>
-            )}
             </div>
           </section>
         )}
