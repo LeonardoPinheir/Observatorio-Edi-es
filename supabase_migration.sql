@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS books (
   pdf_url TEXT,
   download_link TEXT,
   public_page_link TEXT,
+  statistics_url TEXT,
   is_featured BOOLEAN DEFAULT FALSE,
   status TEXT NOT NULL DEFAULT 'Rascunho',
   institution TEXT,

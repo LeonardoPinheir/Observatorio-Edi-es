@@ -1,8 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Book, getBookById } from '../lib/store';
-import { BookLoader } from '../components/BookLoader';
-import { ArrowLeft, Download, BookOpen, Calendar, Hash } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { Book, getBookById } from "../lib/store";
+import { BookLoader } from "../components/BookLoader";
+import {
+  ArrowLeft,
+  Download,
+  BookOpen,
+  Calendar,
+  Hash,
+  BarChart,
+} from "lucide-react";
 
 export function BookDetails() {
   const { id } = useParams<{ id: string }>();
@@ -18,7 +25,7 @@ export function BookDetails() {
           document.title = `${foundBook.title} | Observatório Edições`;
         } else {
           // Handle book not found, maybe redirect or show error
-          navigate('/');
+          navigate("/");
         }
       }
     };
@@ -36,8 +43,8 @@ export function BookDetails() {
   return (
     <div className="min-h-screen bg-obs-bg pt-12 pb-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="inline-flex items-center gap-2 text-sm font-medium text-obs-dark/60 hover:text-obs-dark transition-colors mb-8"
         >
           <ArrowLeft size={16} />
@@ -83,6 +90,22 @@ export function BookDetails() {
                     Download PDF
                   </a>
                 )}
+
+                {book.statisticsUrl && (
+                  <div className="w-full mt-4 overflow-hidden rounded-xl border border-obs-dark/10 bg-white shadow-sm">
+                    <div className="flex items-center justify-center gap-2 border-b border-obs-dark/10 bg-obs-bg px-4 py-3 text-sm font-bold text-obs-dark">
+                      <BarChart size={18} />
+                      Estatísticas de Acesso
+                    </div>
+                    <div className="h-64 w-full">
+                      <iframe 
+                        src={book.statisticsUrl} 
+                        className="h-full w-full border-none bg-white" 
+                        title={`Estatísticas de ${book.title}`}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -106,13 +129,21 @@ export function BookDetails() {
                   </h3>
                   <div className="space-y-3">
                     <div>
-                      <span className="block text-xs text-obs-dark/50 uppercase tracking-wider mb-0.5">Autor(es)</span>
-                      <span className="text-obs-dark font-medium">{book.authors || 'Não informado'}</span>
+                      <span className="block text-xs text-obs-dark/50 uppercase tracking-wider mb-0.5">
+                        Autor(es)
+                      </span>
+                      <span className="text-obs-dark font-medium">
+                        {book.authors || "Não informado"}
+                      </span>
                     </div>
                     {book.organizers && (
                       <div>
-                        <span className="block text-xs text-obs-dark/50 uppercase tracking-wider mb-0.5">Organizador(es)</span>
-                        <span className="text-obs-dark font-medium">{book.organizers}</span>
+                        <span className="block text-xs text-obs-dark/50 uppercase tracking-wider mb-0.5">
+                          Organizador(es)
+                        </span>
+                        <span className="text-obs-dark font-medium">
+                          {book.organizers}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -125,19 +156,33 @@ export function BookDetails() {
                   <div className="grid grid-cols-2 gap-y-3 gap-x-4">
                     {book.year && (
                       <div className="flex items-start gap-2">
-                        <Calendar size={16} className="text-obs-teal mt-0.5 shrink-0" />
+                        <Calendar
+                          size={16}
+                          className="text-obs-teal mt-0.5 shrink-0"
+                        />
                         <div>
-                          <span className="block text-[10px] text-obs-dark/50 uppercase tracking-wider">Ano</span>
-                          <span className="text-sm text-obs-dark font-medium">{book.year}</span>
+                          <span className="block text-[10px] text-obs-dark/50 uppercase tracking-wider">
+                            Ano
+                          </span>
+                          <span className="text-sm text-obs-dark font-medium">
+                            {book.year}
+                          </span>
                         </div>
                       </div>
                     )}
                     {book.isbn && (
                       <div className="flex items-start gap-2 col-span-2">
-                        <Hash size={16} className="text-obs-teal mt-0.5 shrink-0" />
+                        <Hash
+                          size={16}
+                          className="text-obs-teal mt-0.5 shrink-0"
+                        />
                         <div>
-                          <span className="block text-[10px] text-obs-dark/50 uppercase tracking-wider">ISBN</span>
-                          <span className="text-sm text-obs-dark font-medium">{book.isbn}</span>
+                          <span className="block text-[10px] text-obs-dark/50 uppercase tracking-wider">
+                            ISBN
+                          </span>
+                          <span className="text-sm text-obs-dark font-medium">
+                            {book.isbn}
+                          </span>
                         </div>
                       </div>
                     )}
@@ -151,11 +196,15 @@ export function BookDetails() {
                 </h3>
                 <div className="prose prose-obs max-w-none text-obs-dark/80 leading-relaxed">
                   {book.abstract ? (
-                    book.abstract.split('\n').map((paragraph, idx) => (
-                      <p key={idx} className="mb-4 last:mb-0">{paragraph}</p>
+                    book.abstract.split("\n").map((paragraph, idx) => (
+                      <p key={idx} className="mb-4 last:mb-0">
+                        {paragraph}
+                      </p>
                     ))
                   ) : (
-                    <p className="italic text-obs-dark/50">Nenhum resumo disponível para esta publicação.</p>
+                    <p className="italic text-obs-dark/50">
+                      Nenhum resumo disponível para esta publicação.
+                    </p>
                   )}
                 </div>
               </div>
