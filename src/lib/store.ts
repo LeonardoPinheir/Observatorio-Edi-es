@@ -36,58 +36,7 @@ export interface Book {
   statisticsUrl?: string;
 }
 
-const INITIAL_BOOKS: Book[] = [
-  {
-    id: "1",
-    title: "Ensino, Comunicação e Desinformação",
-    subtitle: "Desafios contemporâneos na sala de aula",
-    type: "Coletânea",
-    authors: "João Pereira",
-    organizers: "Maria Silva",
-    abstract:
-      "Esta obra reúne pesquisas e reflexões sobre o impacto da desinformação no ambiente escolar e as estratégias de comunicação e ensino para mitigar seus efeitos. Uma leitura essencial para educadores que buscam compreender as dinâmicas da informação na era digital.",
-    year: 2024,
-    isbn: "978-85-12345-67-8",
-    coverUrl:
-      "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=600",
-    category: "Educação e Mídia",
-    isFeatured: true,
-    status: "Publicado",
-  },
-  {
-    id: "2",
-    title: "Experiências Europeias de Combate à Desinformação",
-    subtitle: "Políticas públicas e iniciativas da sociedade civil",
-    type: "Livro de autoria única",
-    authors: "Ana Costa, Carlos Mendes",
-    abstract:
-      "Uma análise aprofundada das abordagens adotadas por países europeus para enfrentar a disseminação de notícias falsas. O livro explora desde regulamentações governamentais até projetos de fact-checking independentes, oferecendo um panorama rico de soluções.",
-    year: 2023,
-    isbn: "978-85-98765-43-2",
-    coverUrl:
-      "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&q=80&w=600",
-    category: "Políticas Públicas",
-    isFeatured: true,
-    status: "Publicado",
-  },
-  {
-    id: "3",
-    title: "Ecossistemas de Inovação e Educação",
-    subtitle: "Conectando universidade, mercado e sociedade",
-    type: "Coletânea",
-    authors: "Vários Autores",
-    organizers: "Pedro Almeida",
-    abstract:
-      "Coletânea que discute como as instituições de ensino superior podem se integrar de forma mais efetiva aos ecossistemas de inovação locais e globais. Apresenta estudos de caso de parcerias bem-sucedidas e propõe novos modelos de extensão universitária.",
-    year: 2025,
-    isbn: "978-85-55555-55-5",
-    coverUrl:
-      "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&q=80&w=600",
-    category: "Inovação",
-    isFeatured: false,
-    status: "Publicado",
-  },
-];
+const INITIAL_BOOKS: Book[] = [];
 
 // Helper functions to map between frontend and database
 const mapBookToDB = (book: Partial<Book>) => {
@@ -217,18 +166,36 @@ const uploadFile = async (file: File, path: string): Promise<string> => {
   return publicUrl;
 };
 
-export const getBooks = async (): Promise<Book[]> => {
-  if (supabase) {
-    const { data, error } = await supabase
-      .from("books")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching books from Supabase:", error);
-    } else if (data) {
-      return data.map(mapDBToBook);
+// Helper to handle Supabase errors without excessive logging
+const handleSupabaseError = (context: string, error: any) => {
+  // Only log if it's not a standard network error/unconfigured error
+  if (error && error.message !== 'Failed to fetch') {
+    console.warn(`[Supabase] ${context}:`, error.message || error);
+  } else if (error) {
+    // For network errors, log a more concise message once
+    if (!(window as any)._supabaseNetworkErrorLogged) {
+      console.warn(`[Supabase] Network error or unconfigured backend. Using local fallback.`);
+      (window as any)._supabaseNetworkErrorLogged = true;
     }
+  }
+};
+
+export const getBooks = async (): Promise<Book[]> => {
+  try {
+    if (supabase) {
+      const { data, error } = await supabase
+        .from("books")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        handleSupabaseError("fetching books", error);
+      } else if (data) {
+        return data.map(mapDBToBook);
+      }
+    }
+  } catch (err) {
+    handleSupabaseError("unexpected error fetching books", err);
   }
 
   // Fallback to localStorage
@@ -246,18 +213,22 @@ export const getBooks = async (): Promise<Book[]> => {
 };
 
 export const getBookById = async (id: string): Promise<Book | undefined> => {
-  if (supabase) {
-    const { data, error } = await supabase
-      .from("books")
-      .select("*")
-      .eq("id", id)
-      .single();
+  try {
+    if (supabase) {
+      const { data, error } = await supabase
+        .from("books")
+        .select("*")
+        .eq("id", id)
+        .single();
 
-    if (error) {
-      console.error("Error fetching book from Supabase:", error);
-    } else if (data) {
-      return mapDBToBook(data);
+      if (error) {
+        handleSupabaseError("fetching book", error);
+      } else if (data) {
+        return mapDBToBook(data);
+      }
     }
+  } catch (err) {
+    handleSupabaseError("unexpected error fetching book by id", err);
   }
 
   const books = await getBooks();
@@ -635,17 +606,21 @@ export const deleteSubmission = async (id: string) => {
 // Template
 export const getSubmissionTemplate =
   async (): Promise<SubmissionTemplate | null> => {
-    if (supabase) {
-      const { data, error } = await supabase
-        .from("submission_templates")
-        .select("*")
-        .single();
+    try {
+      if (supabase) {
+        const { data, error } = await supabase
+          .from("submission_templates")
+          .select("*")
+          .single();
 
-      if (error && error.code !== "PGRST116") {
-        console.error("Error fetching template from Supabase:", error);
-      } else if (data) {
-        return mapDBToTemplate(data);
+        if (error && error.code !== "PGRST116") {
+          handleSupabaseError("fetching template", error);
+        } else if (data) {
+          return mapDBToTemplate(data);
+        }
       }
+    } catch (err) {
+      handleSupabaseError("unexpected error fetching template", err);
     }
 
     const stored = localStorage.getItem("obs_submission_template");
@@ -729,17 +704,21 @@ export const updateSubmissionTemplate = async (
 
 // Calls
 export const getCalls = async (): Promise<Call[]> => {
-  if (supabase) {
-    const { data, error } = await supabase
-      .from("open_calls")
-      .select("*")
-      .order("created_at", { ascending: false });
+  try {
+    if (supabase) {
+      const { data, error } = await supabase
+        .from("open_calls")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("Error fetching calls from Supabase:", error);
-    } else if (data && data.length > 0) {
-      return data as Call[];
+      if (error) {
+        handleSupabaseError("fetching calls", error);
+      } else if (data && data.length > 0) {
+        return data as Call[];
+      }
     }
+  } catch (err) {
+    handleSupabaseError("unexpected error fetching calls", err);
   }
 
   const stored = localStorage.getItem("obs_calls");
@@ -818,17 +797,21 @@ export const deleteCall = async (id: string) => {
 
 // Team
 export const getTeam = async (): Promise<TeamMember[]> => {
-  if (supabase) {
-    const { data, error } = await supabase
-      .from("team_members")
-      .select("*")
-      .order("order", { ascending: true });
+  try {
+    if (supabase) {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select("*")
+        .order("order", { ascending: true });
 
-    if (error) {
-      console.error("Error fetching team from Supabase:", error);
-    } else if (data && data.length > 0) {
-      return data as TeamMember[];
+      if (error) {
+        handleSupabaseError("fetching team", error);
+      } else if (data && data.length > 0) {
+        return data as TeamMember[];
+      }
     }
+  } catch (err) {
+    handleSupabaseError("unexpected error fetching team", err);
   }
 
   const stored = localStorage.getItem("obs_team");
@@ -839,36 +822,7 @@ export const getTeam = async (): Promise<TeamMember[]> => {
       console.error("Failed to parse team from localStorage", e);
     }
   }
-  return [
-    {
-      id: "1",
-      name: "Dra. Ana Luiza Silva",
-      role: "Coordenação Editorial",
-      institution: "Universidade Federal",
-      order: 1,
-    },
-    {
-      id: "2",
-      name: "Dr. Carlos Mendes",
-      role: "Conselho Editorial",
-      institution: "Universidade Estadual",
-      order: 2,
-    },
-    {
-      id: "3",
-      name: "Me. João Pereira",
-      role: "Apoio Técnico e Revisão",
-      institution: "Instituto de Pesquisa",
-      order: 3,
-    },
-    {
-      id: "4",
-      name: "Dra. Maria Costa",
-      role: "Conselho Editorial",
-      institution: "Universidade Internacional",
-      order: 4,
-    },
-  ];
+  return [];
 };
 
 export const addTeamMember = async (member: Omit<TeamMember, "id">) => {
