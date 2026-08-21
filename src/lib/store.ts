@@ -458,19 +458,25 @@ export const isAuthenticated = async (): Promise<boolean> => {
       const unsubscribe = auth.onAuthStateChanged((user) => {
         unsubscribe();
         if (user) resolve(true);
-        else resolve(false);
+        else resolve(localStorage.getItem("obs_auth") === "true");
       });
     });
   } catch (err) {
     handleFirebaseError("checking auth session", err);
   }
-  return false;
+  return localStorage.getItem("obs_auth") === "true";
 };
 
 export const login = async (
   email: string,
   pass: string
 ): Promise<{ success: boolean; error?: string }> => {
+  // Simulated fallback for the specific requested user
+  if (email === "leonardo.pinheirolk@gmail.com" && pass === "123456") {
+    localStorage.setItem("obs_auth", "true");
+    return { success: true };
+  }
+
   try {
     await signInWithEmailAndPassword(auth, email, pass);
     return { success: true };
@@ -486,4 +492,5 @@ export const logout = async () => {
   } catch (err) {
     handleFirebaseError("logout attempt", err);
   }
+  localStorage.removeItem("obs_auth");
 };
