@@ -329,7 +329,7 @@ export function Admin() {
       console.error("Error saving book:", error);
       setErrorMessage(
         error.message ||
-          'Ocorreu um erro ao salvar a publicação. Verifique se a tabela "books" existe no Supabase.',
+          'Ocorreu um erro ao salvar a publicação. Verifique as configurações do banco de dados.',
       );
     } finally {
       setIsLoading(false);
