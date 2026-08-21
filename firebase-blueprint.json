@@ -1,0 +1,112 @@
+{
+  "collections": [
+    {
+      "collectionId": "books",
+      "description": "Library of books.",
+      "securityRules": {
+        "read": "true",
+        "write": "true"
+      },
+      "schema": {
+        "title": "string",
+        "subtitle": "string",
+        "type": "string",
+        "abstract": "string",
+        "authors": "string",
+        "organizers": "string",
+        "publicationDate": "string",
+        "year": "number",
+        "collection": "string",
+        "volume": "string",
+        "isbn": "string",
+        "category": "string",
+        "coverUrl": "string",
+        "pdfUrl": "string",
+        "downloadLink": "string",
+        "statisticsUrl": "string",
+        "isFeatured": "boolean",
+        "status": "string",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      }
+    },
+    {
+      "collectionId": "messages",
+      "description": "Contact messages.",
+      "securityRules": {
+        "read": "true",
+        "write": "true"
+      },
+      "schema": {
+        "name": "string",
+        "email": "string",
+        "subject": "string",
+        "content": "string",
+        "date": "string",
+        "status": "string"
+      }
+    },
+    {
+      "collectionId": "submissions",
+      "description": "Book submissions.",
+      "securityRules": {
+        "read": "true",
+        "write": "true"
+      },
+      "schema": {
+        "name": "string",
+        "email": "string",
+        "title": "string",
+        "abstract": "string",
+        "fileUrl": "string",
+        "fileName": "string",
+        "date": "string",
+        "status": "string"
+      }
+    },
+    {
+      "collectionId": "submission_templates",
+      "description": "Submission templates.",
+      "securityRules": {
+        "read": "true",
+        "write": "true"
+      },
+      "schema": {
+        "fileUrl": "string",
+        "fileName": "string",
+        "updatedAt": "string"
+      }
+    },
+    {
+      "collectionId": "open_calls",
+      "description": "Open calls for submissions.",
+      "securityRules": {
+        "read": "true",
+        "write": "true"
+      },
+      "schema": {
+        "title": "string",
+        "description": "string",
+        "deadline": "string",
+        "status": "string",
+        "link": "string",
+        "created_at": "timestamp"
+      }
+    },
+    {
+      "collectionId": "team_members",
+      "description": "Team members.",
+      "securityRules": {
+        "read": "true",
+        "write": "true"
+      },
+      "schema": {
+        "name": "string",
+        "role": "string",
+        "institution": "string",
+        "order": "number",
+        "created_at": "timestamp"
+      }
+    }
+  ]
+}
